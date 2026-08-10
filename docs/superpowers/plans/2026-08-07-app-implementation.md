@@ -14,7 +14,7 @@
 - パッケージ管理は pnpm のみ。npm / yarn を使わない
 - 自作の Rust コードは書かない（プラグイン登録のみ）
 - TypeScript は strict
-- `docs/findings.md` とリポジトリ直下の `index.html`（モック）はコミットしない
+- `docs/findings.md` はコミットしない（モックの `index.html` は退避済み。直下の `index.html` は Vite のエントリでコミット対象）
 - LLM 通信は OpenAI 互換 API のみ（`/chat/completions`, `/models`）
 - コミットメッセージは日本語。Co-Authored-By は付けない
 - 実装順の制約: Task 1（Tauri スパイク）を最初に行う。機械検証（F5）は Task 9-10 まで実装しない
@@ -273,7 +273,7 @@ Run: `pnpm tauri dev`
 `CLAUDE.md` の「現在のフェーズ」を「実装フェーズ。docs/superpowers/plans/ の計画に従う」に変更。
 
 ```bash
-git add -A ':!index.html' ':!docs/findings.md'
+git add -A ':!docs/findings.md'
 git commit -m "Tauri + React scaffold と通信スパイク
 
 tauri-plugin-http 経由の SSE 逐次受信と AbortSignal での中断を実機確認。"
@@ -342,7 +342,7 @@ Expected: lint / format はエラーなし。test は「no test files found」�
 - [ ] **Step 4: コミット**
 
 ```bash
-git add -A ':!index.html' ':!docs/findings.md'
+git add -A ':!docs/findings.md'
 git commit -m "oxlint / oxfmt / Vitest を導入"
 ```
 
@@ -491,7 +491,7 @@ createRoot(document.getElementById('root')!).render(
 Run: `pnpm tauri dev` → `/` と `/settings` をヘッダーのリンクで行き来できること。`pnpm lint && pnpm test`
 
 ```bash
-git add -A ':!index.html' ':!docs/findings.md'
+git add -A ':!docs/findings.md'
 git commit -m "TanStack Router とスタイル基盤を導入"
 ```
 
@@ -613,7 +613,7 @@ Run: `pnpm test && pnpm lint`
 Expected: PASS
 
 ```bash
-git add -A ':!index.html' ':!docs/findings.md'
+git add -A ':!docs/findings.md'
 git commit -m "接続設定の共有 domain と localStorage 永続化"
 ```
 
@@ -843,7 +843,7 @@ Run: `pnpm test && pnpm lint`
 Expected: PASS
 
 ```bash
-git add -A ':!index.html' ':!docs/findings.md'
+git add -A ':!docs/findings.md'
 git commit -m "OpenAI 互換 LLM アダプタ（SSE を Web 標準ストリームで解釈）"
 ```
 
@@ -1065,7 +1065,7 @@ Run: `pnpm test && pnpm lint`
 Expected: PASS
 
 ```bash
-git add -A ':!index.html' ':!docs/findings.md'
+git add -A ':!docs/findings.md'
 git commit -m "校正 domain（プロンプト組立と整形。機械検証は後続タスク）"
 ```
 
@@ -1243,7 +1243,7 @@ Run: `pnpm tauri dev`
 3. `pnpm test && pnpm lint`
 
 ```bash
-git add -A ':!index.html' ':!docs/findings.md'
+git add -A ':!docs/findings.md'
 git commit -m "設定画面（接続先プリセット・モデル選択・未接続時の案内）"
 ```
 
@@ -1611,7 +1611,7 @@ Run: `pnpm tauri dev`
 - [ ] **Step 5: コミット**
 
 ```bash
-git add -A ':!index.html' ':!docs/findings.md'
+git add -A ':!docs/findings.md'
 git commit -m "校正画面（機械検証なしで一連の操作が動く状態）"
 ```
 
@@ -1729,7 +1729,7 @@ Run: `pnpm test && pnpm lint`
 Expected: PASS
 
 ```bash
-git add -A ':!index.html' ':!docs/findings.md'
+git add -A ':!docs/findings.md'
 git commit -m "機械検証（長さ比・疑問の保存・新規文字比率・直前案との同一判定）"
 ```
 
@@ -1872,7 +1872,7 @@ Run: `pnpm test` → Expected: PASS
 Run: `pnpm tauri dev` → 通常の校正が今までどおり動き、同じ入力の連続実行で別案が返ること。`pnpm test && pnpm lint`
 
 ```bash
-git add -A ':!index.html' ':!docs/findings.md'
+git add -A ':!docs/findings.md'
 git commit -m "機械検証と再試行を校正フローに統合"
 ```
 
@@ -1962,7 +1962,7 @@ Run: `pnpm tauri dev`
 `CLAUDE.md` の「現在のフェーズ」を「実装完了。動作確認済み」に更新。
 
 ```bash
-git add -A ':!index.html' ':!docs/findings.md'
+git add -A ':!docs/findings.md'
 git commit -m "接続状態表示と受け入れ確認"
 ```
 
