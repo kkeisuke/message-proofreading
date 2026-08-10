@@ -12,11 +12,13 @@
     "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
+    "@tanstack/react-router": "^1.170.24",
     "@tauri-apps/plugin-http": "~2.5.9",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },
   "devDependencies": {
+    "@tanstack/router-plugin": "^1.168.28",
     "@tauri-apps/cli": "^2.11.4",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",

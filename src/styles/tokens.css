@@ -1,0 +1,14 @@
+@layer tokens {
+  :root {
+    color-scheme: light dark;
+    --color-bg: light-dark(oklch(98% 0.005 250), oklch(22% 0.01 250));
+    --color-text: light-dark(oklch(25% 0.02 250), oklch(92% 0.005 250));
+    --color-accent: oklch(55% 0.15 250);
+    --color-border: light-dark(oklch(85% 0.01 250), oklch(35% 0.01 250));
+    --color-warn: oklch(60% 0.15 60);
+    --space-1: 0.5rem;
+    --space-2: 1rem;
+    --space-3: 1.5rem;
+    --radius: 8px;
+  }
+}
