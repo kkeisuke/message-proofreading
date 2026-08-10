@@ -1,5 +1,25 @@
+import { fetch as tauriFetch } from '@tauri-apps/plugin-http';
 import { createFileRoute } from '@tanstack/react-router';
+import { streamChat } from '../adapter/llm/client';
+import { loadSettings } from '../adapter/storage/settings';
+import { baseUrlOf } from '../domain/connection';
+import { ProofreadScreen, type GenerateFn } from '../features/proofread';
 
 export const Route = createFileRoute('/')({
-  component: () => <main>校正画面（Task 8 で実装）</main>,
+  loader: () => loadSettings(localStorage),
+  component: IndexPage,
 });
+
+function IndexPage() {
+  const settings = Route.useLoaderData();
+  const generate: GenerateFn | null = settings.model
+    ? (messages, opts) =>
+        streamChat(
+          tauriFetch,
+          { baseUrl: baseUrlOf(settings.presetId), model: settings.model! },
+          messages,
+          opts,
+        )
+    : null;
+  return <ProofreadScreen generate={generate} />;
+}
