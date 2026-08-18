@@ -1,5 +1,6 @@
 import { fetch as tauriFetch } from '@tauri-apps/plugin-http';
 import { createFileRoute } from '@tanstack/react-router';
+import { useMemo } from 'react';
 import { streamChat } from '../adapter/llm/client';
 import { loadSettings } from '../adapter/storage/settings';
 import { baseUrlOf } from '../domain/connection';
@@ -12,14 +13,11 @@ export const Route = createFileRoute('/')({
 
 function IndexPage() {
   const settings = Route.useLoaderData();
-  const generate: GenerateFn | null = settings.model
-    ? (messages, opts) =>
-        streamChat(
-          tauriFetch,
-          { baseUrl: baseUrlOf(settings.presetId), model: settings.model! },
-          messages,
-          opts,
-        )
-    : null;
+  const generate: GenerateFn | null = useMemo(() => {
+    const model = settings.model;
+    if (!model) return null;
+    return (messages, opts) =>
+      streamChat(tauriFetch, { baseUrl: baseUrlOf(settings.presetId), model }, messages, opts);
+  }, [settings.presetId, settings.model]);
   return <ProofreadScreen generate={generate} />;
 }
