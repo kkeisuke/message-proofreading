@@ -30,7 +30,7 @@ export function extractDelta(event: string): SseDelta | null {
     }
 
     const error = (parsed as { error?: unknown }).error;
-    if (error !== undefined && error !== null) {
+    if (error && (typeof error === 'object' || typeof error === 'string')) {
       return { kind: 'error', message: errorMessage(error) };
     }
 

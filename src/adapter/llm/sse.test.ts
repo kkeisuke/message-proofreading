@@ -76,4 +76,20 @@ describe('extractDelta', () => {
       message: 'busy',
     });
   });
+
+  it('error が false はエラー扱いしない', () => {
+    expect(extractDelta(`data: ${JSON.stringify({ error: false })}`)).toBeNull();
+  });
+
+  it('error が空文字はエラー扱いしない', () => {
+    expect(extractDelta(`data: ${JSON.stringify({ error: '' })}`)).toBeNull();
+  });
+
+  it('error が true（オブジェクトでも文字列でもない）はエラー扱いしない', () => {
+    expect(extractDelta(`data: ${JSON.stringify({ error: true })}`)).toBeNull();
+  });
+
+  it('error が 0 はエラー扱いしない', () => {
+    expect(extractDelta(`data: ${JSON.stringify({ error: 0 })}`)).toBeNull();
+  });
 });

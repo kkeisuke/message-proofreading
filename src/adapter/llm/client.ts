@@ -1,3 +1,4 @@
+import { LlmError } from '../../domain/llmError';
 import { extractDelta, sseEvents } from './sse';
 
 /**
@@ -17,13 +18,37 @@ const SAMPLING = { temperature: 0.7 };
 /** リダイレクトはローカルの OpenAI 互換 API に不要で、外部送信の経路になるため追跡しない。 */
 const NO_REDIRECT = { maxRedirections: 0 } as const;
 
+/** fetch 自体の失敗（接続不能）を LlmError('unreachable') に変換する。 */
+async function fetchOrThrow(fetchFn: FetchLike, url: string, init: FetchInit): Promise<Response> {
+  try {
+    return await fetchFn(url, init);
+  } catch (e) {
+    throw new LlmError('unreachable', `${url} に接続できませんでした: ${causeMessage(e)}`);
+  }
+}
+
+function causeMessage(e: unknown): string {
+  return e instanceof Error ? e.message : String(e);
+}
+
+/** 到達はできたが失敗した HTTP レスポンスを、種別付きの LlmError に変換する。 */
+function httpErrorOf(status: number): LlmError {
+  if (status === 404) {
+    return new LlmError(
+      'model-not-found',
+      `モデルが見つかりません（HTTP ${status}）。モデル名を確認してください。`,
+    );
+  }
+  return new LlmError('other', `HTTP ${status}`);
+}
+
 export async function streamChat(
   fetchFn: FetchLike,
   config: LlmConfig,
   messages: ChatMessage[],
   opts: { signal?: AbortSignal; onChunk?: (acc: string) => void } = {},
 ): Promise<string> {
-  const res = await fetchFn(`${config.baseUrl}/chat/completions`, {
+  const res = await fetchOrThrow(fetchFn, `${config.baseUrl}/chat/completions`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -35,7 +60,7 @@ export async function streamChat(
     signal: opts.signal,
     ...NO_REDIRECT,
   });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  if (!res.ok) throw httpErrorOf(res.status);
 
   let acc = '';
   let received = false;
@@ -49,14 +74,15 @@ export async function streamChat(
     const delta = extractDelta(value);
     if (!delta) continue;
     if (delta.kind === 'error') {
-      throw new Error(`モデルが生成中にエラーを返しました: ${delta.message}`);
+      throw new LlmError('other', `モデルが生成中にエラーを返しました: ${delta.message}`);
     }
     received = true;
     acc += delta.content;
     opts.onChunk?.(acc);
   }
   if (!received) {
-    throw new Error(
+    throw new LlmError(
+      'other',
       'モデルから校正案が返りませんでした。入力が長すぎるか、モデルが応答できない状態の可能性があります。',
     );
   }
@@ -64,8 +90,8 @@ export async function streamChat(
 }
 
 export async function listModels(fetchFn: FetchLike, baseUrl: string): Promise<string[]> {
-  const res = await fetchFn(`${baseUrl}/models`, { ...NO_REDIRECT });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const res = await fetchOrThrow(fetchFn, `${baseUrl}/models`, { ...NO_REDIRECT });
+  if (!res.ok) throw httpErrorOf(res.status);
   const json = (await res.json()) as { data?: { id: string }[] };
   return (json.data ?? []).map((m) => m.id);
 }

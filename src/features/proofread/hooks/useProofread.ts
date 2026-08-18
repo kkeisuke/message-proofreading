@@ -1,13 +1,21 @@
 import { useEffect, useRef, useState } from 'react';
+import { LlmError, type LlmErrorKind } from '../../../domain/llmError';
 import { cleanup } from '../domain/cleanup';
 import { proofread } from '../domain/proofread';
 import type { GenerateFn } from '../domain/proofread';
 import type { Scene } from '../domain/prompts';
 
+/**
+ * 校正失敗の表示用情報。
+ * kind で「接続できません」とそれ以外の失敗を分け、message は見出しに、
+ * raw は <details> に生のエラー文字列として出す。
+ */
+export type ProofreadError = { kind: LlmErrorKind; message: string; raw: string };
+
 export function useProofread(generate: GenerateFn) {
   const [phase, setPhase] = useState<'idle' | 'running'>('idle');
   const [proposal, setProposal] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<ProofreadError | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
@@ -29,6 +37,8 @@ export function useProofread(generate: GenerateFn) {
       const result = await proofread(input, scene, generate, {
         signal: ac.signal,
         onChunk: (acc) => {
+          // 中断直後に届いた先行 run のチャンクが後続 run の表示を上書きしないようにする。
+          if (abortRef.current !== ac) return;
           raw = acc;
           setProposal(acc);
         },
@@ -41,7 +51,11 @@ export function useProofread(generate: GenerateFn) {
         setProposal(cleanup(raw));
       } else {
         setProposal('');
-        setError(String(e));
+        setError(
+          e instanceof LlmError
+            ? { kind: e.kind, message: e.message, raw: String(e) }
+            : { kind: 'other', message: String(e), raw: String(e) },
+        );
       }
     } finally {
       if (abortRef.current === ac) setPhase('idle');

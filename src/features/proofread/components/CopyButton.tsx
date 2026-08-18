@@ -33,11 +33,17 @@ export function CopyButton({ text, disabled }: Props) {
   };
 
   // async 関数の Promise を捨てるとコピー失敗が握り潰されるため、必ず両方の結果を通知する。
+  // 非セキュアコンテキストでは navigator.clipboard が undefined で、
+  // writeText の呼び出し自体が同期的に例外を投げるため try で囲む。
   const copy = () => {
-    void navigator.clipboard.writeText(text).then(
-      () => notify('copied'),
-      () => notify('failed'),
-    );
+    try {
+      void navigator.clipboard.writeText(text).then(
+        () => notify('copied'),
+        () => notify('failed'),
+      );
+    } catch {
+      notify('failed');
+    }
   };
 
   return (
