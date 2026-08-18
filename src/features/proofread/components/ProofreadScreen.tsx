@@ -8,9 +8,9 @@ import { ProposalView } from './ProposalView';
 import { SceneSelector } from './SceneSelector';
 import './ProofreadScreen.css';
 
-type Props = { generate: GenerateFn | null };
+type Props = { generate: GenerateFn | null; startHint: string };
 
-export function ProofreadScreen({ generate }: Props) {
+export function ProofreadScreen({ generate, startHint }: Props) {
   const [input, setInput] = useState('');
   const [scene, setScene] = useState<Scene>('business');
 
@@ -23,18 +23,21 @@ export function ProofreadScreen({ generate }: Props) {
       </main>
     );
   }
-  return <Inner generate={generate} {...{ input, setInput, scene, setScene }} />;
+  return (
+    <Inner generate={generate} startHint={startHint} {...{ input, setInput, scene, setScene }} />
+  );
 }
 
 type InnerProps = {
   generate: GenerateFn;
+  startHint: string;
   input: string;
   setInput: (v: string) => void;
   scene: Scene;
   setScene: (s: Scene) => void;
 };
 
-function Inner({ generate, input, setInput, scene, setScene }: InnerProps) {
+function Inner({ generate, startHint, input, setInput, scene, setScene }: InnerProps) {
   const { phase, proposal, error, run, cancel } = useProofread(generate);
   const running = phase === 'running';
 
@@ -52,11 +55,11 @@ function Inner({ generate, input, setInput, scene, setScene }: InnerProps) {
           中断
         </button>
       ) : (
-        <button type="button" disabled={!input.trim()} onClick={() => run(input, scene)}>
+        <button type="button" disabled={!input.trim()} onClick={() => run(input.trim(), scene)}>
           校正する
         </button>
       )}
-      <ProposalView proposal={proposal} running={running} error={error} />
+      <ProposalView proposal={proposal} running={running} error={error} startHint={startHint} />
       <CopyButton text={proposal} disabled={running || !proposal} />
     </main>
   );

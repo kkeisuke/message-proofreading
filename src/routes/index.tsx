@@ -3,7 +3,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { useMemo } from 'react';
 import { streamChat } from '../adapter/llm/client';
 import { loadSettings } from '../adapter/storage/settings';
-import { baseUrlOf } from '../domain/connection';
+import { baseUrlOf, startHintOf } from '../domain/connection';
 import { ProofreadScreen, type GenerateFn } from '../features/proofread';
 
 export const Route = createFileRoute('/')({
@@ -19,5 +19,5 @@ function IndexPage() {
     return (messages, opts) =>
       streamChat(tauriFetch, { baseUrl: baseUrlOf(settings.presetId), model }, messages, opts);
   }, [settings.presetId, settings.model]);
-  return <ProofreadScreen generate={generate} />;
+  return <ProofreadScreen generate={generate} startHint={startHintOf(settings.presetId)} />;
 }

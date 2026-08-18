@@ -11,7 +11,18 @@
     }
 
     & .proposal-view-error {
-      color: var(--color-warn);
+      display: grid;
+      gap: var(--space-1);
+
+      & .proposal-view-error-state {
+        color: var(--color-warn);
+      }
+
+      & pre {
+        margin-block-start: var(--space-1);
+        white-space: pre-wrap;
+        word-break: break-all;
+      }
     }
   }
 }

@@ -24,3 +24,6 @@ export const DEFAULT_SETTINGS: Settings = { presetId: 'model-runner', model: nul
 
 export const baseUrlOf = (presetId: PresetId): string =>
   PRESETS.find((p) => p.id === presetId)!.baseUrl;
+
+export const startHintOf = (presetId: PresetId): string =>
+  PRESETS.find((p) => p.id === presetId)!.startHint;
