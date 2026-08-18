@@ -1,0 +1,12 @@
+@layer components {
+  .connection-status {
+    font-size: 0.85em;
+    padding: 2px var(--space-1);
+    border-radius: var(--radius);
+    border: 1px solid var(--color-border);
+
+    &[data-ok='false'] {
+      color: var(--color-warn);
+    }
+  }
+}
