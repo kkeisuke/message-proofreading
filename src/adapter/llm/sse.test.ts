@@ -33,16 +33,47 @@ describe('sseEvents', () => {
   it('末尾に改行がなくても flush で出す', async () => {
     expect(await collect(['data: tail'])).toEqual(['data: tail']);
   });
+
+  it('CRLF 区切りでも分割する', async () => {
+    expect(await collect(['data: a\r\n\r\ndata: b\r\n\r\n'])).toEqual(['data: a', 'data: b']);
+  });
+
+  it('CRLF が区切りの途中で切れても結合する', async () => {
+    expect(await collect(['data: a\r\n\r', '\ndata: b\r\n\r\n'])).toEqual(['data: a', 'data: b']);
+  });
+
+  it('CR のみの区切りでも分割する', async () => {
+    expect(await collect(['data: a\r\rdata: b\r\r'])).toEqual(['data: a', 'data: b']);
+  });
 });
 
 describe('extractDelta', () => {
   it('delta.content を取り出す', () => {
     const event = `data: ${JSON.stringify({ choices: [{ delta: { content: 'こん' } }] })}`;
-    expect(extractDelta(event)).toBe('こん');
+    expect(extractDelta(event)).toEqual({ kind: 'content', content: 'こん' });
+  });
+
+  it('CRLF 改行のイベントでも delta.content を取り出す', () => {
+    const event = `event: message\r\ndata: ${JSON.stringify({
+      choices: [{ delta: { content: 'こん' } }],
+    })}\r\n`;
+    expect(extractDelta(event)).toEqual({ kind: 'content', content: 'こん' });
   });
 
   it('[DONE] と壊れた JSON は null', () => {
     expect(extractDelta('data: [DONE]')).toBeNull();
     expect(extractDelta('data: {broken')).toBeNull();
+  });
+
+  it('error フィールドを持つイベントはエラーとして返す', () => {
+    const event = `data: ${JSON.stringify({ error: { message: 'context length exceeded' } })}`;
+    expect(extractDelta(event)).toEqual({ kind: 'error', message: 'context length exceeded' });
+  });
+
+  it('error が文字列でもエラーとして返す', () => {
+    expect(extractDelta(`data: ${JSON.stringify({ error: 'busy' })}`)).toEqual({
+      kind: 'error',
+      message: 'busy',
+    });
   });
 });
