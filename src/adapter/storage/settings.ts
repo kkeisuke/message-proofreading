@@ -19,3 +19,11 @@ export function loadSettings(storage: StorageLike): Settings {
 export function saveSettings(storage: StorageLike, settings: Settings): void {
   storage.setItem(KEY, JSON.stringify(settings));
 }
+
+/** 保管先を束ねた設定ストアを組み立てる。features 側のポートを構造的部分型で満たす。 */
+export function createSettingsStore(storage: StorageLike) {
+  return {
+    load: (): Settings => loadSettings(storage),
+    save: (settings: Settings): void => saveSettings(storage, settings),
+  };
+}

@@ -2,12 +2,14 @@ import { fetch as tauriFetch } from '@tauri-apps/plugin-http';
 import { createFileRoute } from '@tanstack/react-router';
 import { useMemo } from 'react';
 import { streamChat } from '../adapter/llm/client';
-import { loadSettings } from '../adapter/storage/settings';
+import { createSettingsStore } from '../adapter/storage/settings';
 import { baseUrlOf, startHintOf } from '../api/connection';
 import { ProofreadScreen, type GenerateFn } from '../features/proofread';
 
+const store = createSettingsStore(localStorage);
+
 export const Route = createFileRoute('/')({
-  loader: () => loadSettings(localStorage),
+  loader: () => store.load(),
   component: IndexPage,
 });
 

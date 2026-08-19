@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { loadSettings, saveSettings } from '../../../adapter/storage/settings';
 import type { Settings } from '../../../api/connection';
+import type { SettingsStore } from '../domain/settingsStore';
 
-export function useSettings() {
-  const [settings, setSettings] = useState<Settings>(() => loadSettings(localStorage));
+export function useSettings(store: SettingsStore) {
+  const [settings, setSettings] = useState<Settings>(() => store.load());
   const save = (next: Settings) => {
-    saveSettings(localStorage, next);
+    store.save(next);
     setSettings(next);
   };
   return { settings, save };

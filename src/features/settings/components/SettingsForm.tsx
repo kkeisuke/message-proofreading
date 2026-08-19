@@ -1,11 +1,17 @@
 import { PRESETS, type Settings } from '../../../api/connection';
+import type { SettingsStore } from '../domain/settingsStore';
 import { useSettings } from '../hooks/useSettings';
 import './SettingsForm.css';
 
-type Props = { models: string[]; error: string | null; onPresetChange?: () => void };
+type Props = {
+  store: SettingsStore;
+  models: string[];
+  error: string | null;
+  onPresetChange?: () => void;
+};
 
-export function SettingsForm({ models, error, onPresetChange }: Props) {
-  const { settings, save } = useSettings();
+export function SettingsForm({ store, models, error, onPresetChange }: Props) {
+  const { settings, save } = useSettings(store);
 
   const setPreset = (presetId: Settings['presetId']) => {
     save({ presetId, model: null });

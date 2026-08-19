@@ -1,13 +1,15 @@
 import { fetch as tauriFetch } from '@tauri-apps/plugin-http';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { listModels } from '../adapter/llm/client';
-import { loadSettings } from '../adapter/storage/settings';
+import { createSettingsStore } from '../adapter/storage/settings';
 import { baseUrlOf } from '../api/connection';
 import { SettingsForm } from '../features/settings';
 
+const store = createSettingsStore(localStorage);
+
 export const Route = createFileRoute('/settings')({
   loader: async () => {
-    const { presetId } = loadSettings(localStorage);
+    const { presetId } = store.load();
     try {
       return { models: await listModels(tauriFetch, baseUrlOf(presetId)), error: null };
     } catch (e) {
@@ -22,7 +24,12 @@ function SettingsPage() {
   const router = useRouter();
   return (
     <main>
-      <SettingsForm models={models} error={error} onPresetChange={() => router.invalidate()} />
+      <SettingsForm
+        store={store}
+        models={models}
+        error={error}
+        onPresetChange={() => router.invalidate()}
+      />
     </main>
   );
 }
