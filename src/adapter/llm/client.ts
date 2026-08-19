@@ -1,4 +1,5 @@
-import { LlmError } from '../../domain/llmError';
+import type { ChatMessage } from '../../api/chat';
+import { LlmError } from '../../api/llmError';
 import { extractDelta, sseEvents } from './sse';
 
 /**
@@ -8,8 +9,6 @@ import { extractDelta, sseEvents } from './sse';
 export type FetchInit = RequestInit & { maxRedirections?: number };
 
 export type FetchLike = (url: string, init?: FetchInit) => Promise<Response>;
-
-export type ChatMessage = { role: 'system' | 'user' | 'assistant'; content: string };
 
 export type LlmConfig = { baseUrl: string; model: string };
 

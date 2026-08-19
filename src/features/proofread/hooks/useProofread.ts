@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { LlmError, type LlmErrorKind } from '../../../domain/llmError';
+import { LlmError, type LlmErrorKind } from '../../../api/llmError';
 import { cleanup } from '../domain/cleanup';
 import { proofread } from '../domain/proofread';
 import type { GenerateFn } from '../domain/proofread';

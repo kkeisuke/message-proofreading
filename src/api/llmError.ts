@@ -6,7 +6,8 @@
  * - other: 到達はできたが、生成そのものが失敗した（コンテキスト長超過・応答なし・その他の HTTP エラーなど）
  *
  * feature 側はこの種別で「接続できません」の表示と、それ以外の失敗の表示を分ける。
- * 型は adapter と feature の双方から参照されるため、どちらにも属さない共有 domain に置く。
+ * api/ は LLM API との契約を定義する側で、I/O を持たない。
+ * 実際に通信するのは adapter/llm で、この型は adapter と feature の双方から参照される。
  */
 export type LlmErrorKind = 'unreachable' | 'model-not-found' | 'other';
 

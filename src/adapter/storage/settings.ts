@@ -1,4 +1,4 @@
-import { DEFAULT_SETTINGS, PRESETS, type Settings } from '../../domain/connection';
+import { DEFAULT_SETTINGS, PRESETS, type Settings } from '../../api/connection';
 
 const KEY = 'settings';
 

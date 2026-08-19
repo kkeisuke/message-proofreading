@@ -3,7 +3,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { useMemo } from 'react';
 import { streamChat } from '../adapter/llm/client';
 import { loadSettings } from '../adapter/storage/settings';
-import { baseUrlOf, startHintOf } from '../domain/connection';
+import { baseUrlOf, startHintOf } from '../api/connection';
 import { ProofreadScreen, type GenerateFn } from '../features/proofread';
 
 export const Route = createFileRoute('/')({

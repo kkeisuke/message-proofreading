@@ -1,4 +1,4 @@
-import type { ChatMessage } from '../../../adapter/llm/client';
+import type { ChatMessage } from '../../../api/chat';
 
 export type Scene = 'business' | 'casual';
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { LlmError } from '../../domain/llmError';
+import { LlmError } from '../../api/llmError';
 import { listModels, streamChat, type FetchInit, type FetchLike } from './client';
 
 const sseResponse = (events: string[]): Response =>

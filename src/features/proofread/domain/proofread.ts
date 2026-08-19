@@ -1,4 +1,4 @@
-import type { ChatMessage } from '../../../adapter/llm/client';
+import type { ChatMessage } from '../../../api/chat';
 import { cleanup } from './cleanup';
 import { buildMessages, type Scene } from './prompts';
 

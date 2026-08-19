@@ -2,7 +2,7 @@ import { fetch as tauriFetch } from '@tauri-apps/plugin-http';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { listModels } from '../adapter/llm/client';
 import { loadSettings } from '../adapter/storage/settings';
-import { baseUrlOf } from '../domain/connection';
+import { baseUrlOf } from '../api/connection';
 import { SettingsForm } from '../features/settings';
 
 export const Route = createFileRoute('/settings')({

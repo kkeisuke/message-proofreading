@@ -1,3 +1,9 @@
+/**
+ * 接続先（ローカル LLM サーバー）のプリセットと、接続設定の型。
+ *
+ * api/ は LLM API との契約を定義する側で、I/O を持たない。
+ * 実際に通信するのは adapter/llm で、この型は adapter と feature の双方から参照される。
+ */
 export const PRESETS = [
   {
     id: 'model-runner',

@@ -120,7 +120,7 @@ src/
 ├─ adapter/               外部世界との接続実装
 │  ├─ llm/                OpenAI 互換 API（生成 / モデル一覧）。tauri-plugin-http を使う唯一の場所
 │  └─ storage/            設定永続化（localStorage）
-├─ domain/                共有ドメイン（接続設定の型・プリセット定義）
+├─ api/                   LLM API との契約（接続先プリセット・メッセージ形式・エラー種別）
 ├─ components/            アプリ共通 UI。同じく .tsx + .css を1組に
 ├─ hooks/                 アプリ共通 hooks。必要になるまで作らない
 └─ styles/                @layer の順序定義とデザイントークンのみ
@@ -130,10 +130,13 @@ src-tauri/                Tauri シェル（規約による固定名）
 依存はすべて一方向にする。
 
 ```
-routes → features → domain（共有）・components・hooks
-adapter → domain（型のみ）
+routes → features → api・components・hooks
+adapter → api
 ```
 
+- `api/` は LLM API との契約を定義するだけで、通信そのものは持たない
+  - 契約を使って実際に通信するのが `adapter/llm/`
+  - `features/*/domain/` は校正そのもののドメインで、`api/` とは別物
 - feature の `domain/` が定義したポート（例: `GenerateFn`）に、routes 層が `adapter/llm` の実装を注入する
   - adapter は features を知らず、features は adapter の実装を知らない
   - ドメインロジックは fetch や Tauri に依存しない純粋 TypeScript になり、モック注入でテストできる

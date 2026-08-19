@@ -1,4 +1,4 @@
-import { PRESETS, type Settings } from '../../../domain/connection';
+import { PRESETS, type Settings } from '../../../api/connection';
 import { useSettings } from '../hooks/useSettings';
 import './SettingsForm.css';
 

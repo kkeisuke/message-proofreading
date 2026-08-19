@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_SETTINGS } from '../../domain/connection';
+import { DEFAULT_SETTINGS } from '../../api/connection';
 import { loadSettings, saveSettings } from './settings';
 
 const fakeStorage = () => {

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { loadSettings, saveSettings } from '../../../adapter/storage/settings';
-import type { Settings } from '../../../domain/connection';
+import type { Settings } from '../../../api/connection';
 
 export function useSettings() {
   const [settings, setSettings] = useState<Settings>(() => loadSettings(localStorage));
