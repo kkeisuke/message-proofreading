@@ -12,15 +12,16 @@ export function SceneSelector({ value, onChange }: Props) {
   return (
     <div className="scene-selector" role="radiogroup" aria-label="シーン">
       {SCENES.map((s) => (
-        <button
-          key={s.id}
-          type="button"
-          role="radio"
-          aria-checked={value === s.id}
-          onClick={() => onChange(s.id)}
-        >
+        <label key={s.id}>
+          <input
+            type="radio"
+            name="scene"
+            value={s.id}
+            checked={value === s.id}
+            onChange={() => onChange(s.id)}
+          />
           {s.label}
-        </button>
+        </label>
       ))}
     </div>
   );

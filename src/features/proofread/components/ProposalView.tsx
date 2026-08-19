@@ -11,7 +11,7 @@ type Props = {
 
 export function ProposalView({ proposal, running, error, startHint }: Props) {
   return (
-    <section className="proposal-view" aria-live="polite">
+    <section className="proposal-view" aria-live="polite" aria-busy={running}>
       {error ? (
         <div className="proposal-view-error" role="alert">
           {error.kind === 'unreachable' ? (

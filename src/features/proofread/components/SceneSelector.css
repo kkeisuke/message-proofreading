@@ -5,16 +5,34 @@
     border-radius: var(--radius);
     overflow: hidden;
 
-    & button {
-      border: none;
-      background: transparent;
+    & label {
+      display: inline-flex;
+      align-items: center;
       padding: var(--space-1) var(--space-2);
       cursor: pointer;
 
-      &[aria-checked='true'] {
+      /* 選択中の見た目。input は視覚的に隠すため :has() で label 側に反映する。 */
+      &:has(input:checked) {
         background: var(--color-accent);
         color: white;
       }
+
+      /* フォーカスリング。currentColor で選択中（白文字）でも視認できる。
+         コンテナが overflow: hidden なので内側（負のオフセット）に描く。 */
+      &:has(input:focus-visible) {
+        outline: 2px solid currentColor;
+        outline-offset: -3px;
+      }
+    }
+
+    /* display: none はフォーカスを受け取れなくなるため使わない。
+       appearance: none で標準の描画を消し、寸法を 0 にして場所だけ取り除く。 */
+    & input {
+      appearance: none;
+      margin: 0;
+      width: 0;
+      height: 0;
+      outline: none;
     }
   }
 }
