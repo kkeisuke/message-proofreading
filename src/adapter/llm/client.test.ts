@@ -48,13 +48,13 @@ describe('streamChat', () => {
     );
 
     expect(calls).toHaveLength(1);
-    const { url, init } = calls[0]!;
+    const { url, init } = calls[0];
     expect(url).toBe('http://localhost:12434/engines/v1/chat/completions');
     expect(init?.method).toBe('POST');
     expect(init?.headers).toEqual({ 'Content-Type': 'application/json' });
     expect(init?.signal).toBe(ac.signal);
     expect(init?.maxRedirections).toBe(0);
-    expect(JSON.parse(String(init?.body))).toEqual({
+    expect(JSON.parse(init?.body as string)).toEqual({
       model: 'gemma',
       messages,
       stream: true,
@@ -113,14 +113,14 @@ describe('streamChat', () => {
     ]);
 
     expect(unreachable).toBeInstanceOf(LlmError);
-    expect((unreachable as LlmError).kind).toBe('unreachable');
+    if (unreachable instanceof LlmError) expect(unreachable.kind).toBe('unreachable');
 
     expect(modelNotFound).toBeInstanceOf(LlmError);
-    expect((modelNotFound as LlmError).kind).toBe('model-not-found');
+    if (modelNotFound instanceof LlmError) expect(modelNotFound.kind).toBe('model-not-found');
 
     for (const other of [other1, other2, other3]) {
       expect(other).toBeInstanceOf(LlmError);
-      expect((other as LlmError).kind).toBe('other');
+      if (other instanceof LlmError) expect(other.kind).toBe('other');
     }
   });
 });
@@ -138,8 +138,8 @@ describe('listModels', () => {
     );
     await listModels(fetchFn, 'http://localhost:11434/v1');
     expect(calls).toHaveLength(1);
-    expect(calls[0]!.url).toBe('http://localhost:11434/v1/models');
-    expect(calls[0]!.init?.maxRedirections).toBe(0);
+    expect(calls[0].url).toBe('http://localhost:11434/v1/models');
+    expect(calls[0].init?.maxRedirections).toBe(0);
   });
 
   it('接続不能なら unreachable として種別を持つ', async () => {
@@ -148,13 +148,13 @@ describe('listModels', () => {
     };
     const err = await listModels(fetchFn, 'http://x').catch((e: unknown) => e);
     expect(err).toBeInstanceOf(LlmError);
-    expect((err as LlmError).kind).toBe('unreachable');
+    if (err instanceof LlmError) expect(err.kind).toBe('unreachable');
   });
 
   it('HTTP 404 は model-not-found として種別を持つ', async () => {
     const fetchFn: FetchLike = async () => new Response('ng', { status: 404 });
     const err = await listModels(fetchFn, 'http://x').catch((e: unknown) => e);
     expect(err).toBeInstanceOf(LlmError);
-    expect((err as LlmError).kind).toBe('model-not-found');
+    if (err instanceof LlmError) expect(err.kind).toBe('model-not-found');
   });
 });

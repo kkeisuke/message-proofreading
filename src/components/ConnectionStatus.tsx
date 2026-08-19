@@ -8,9 +8,15 @@ export function ConnectionStatus({ check }: Props) {
   const [ok, setOk] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const run = async () => setOk(await check());
-    run();
-    const timer = setInterval(run, 15_000);
+    const run = async () => {
+      try {
+        setOk(await check());
+      } catch {
+        setOk(false);
+      }
+    };
+    void run();
+    const timer = setInterval(() => void run(), 15_000);
     return () => clearInterval(timer);
   }, [check]);
 
