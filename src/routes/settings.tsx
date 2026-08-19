@@ -4,6 +4,7 @@ import { listModels } from '../adapter/llm/client';
 import { createSettingsStore } from '../adapter/storage/settings';
 import { baseUrlOf } from '../api/connection';
 import { SettingsForm } from '../features/settings';
+import { reportConnection, reportConnectionError } from '../hooks/useConnection';
 
 const store = createSettingsStore(localStorage);
 
@@ -11,8 +12,11 @@ export const Route = createFileRoute('/settings')({
   loader: async () => {
     const { presetId } = store.load();
     try {
-      return { models: await listModels(tauriFetch, baseUrlOf(presetId)), error: null };
+      const models = await listModels(tauriFetch, baseUrlOf(presetId));
+      reportConnection(true);
+      return { models, error: null };
     } catch (e) {
+      reportConnectionError(e);
       return { models: [], error: String(e) };
     }
   },

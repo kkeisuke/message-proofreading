@@ -1,24 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useConnection } from '../hooks/useConnection';
 import './ConnectionStatus.css';
 
-/** check は useEffect の依存になるため、呼び出し側で参照を安定させること。 */
-type Props = { check: () => Promise<boolean> };
-
-export function ConnectionStatus({ check }: Props) {
-  const [ok, setOk] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    const run = async () => {
-      try {
-        setOk(await check());
-      } catch {
-        setOk(false);
-      }
-    };
-    void run();
-    const timer = setInterval(() => void run(), 15_000);
-    return () => clearInterval(timer);
-  }, [check]);
+export function ConnectionStatus() {
+  const ok = useConnection();
 
   if (ok === null) return null;
   return (
