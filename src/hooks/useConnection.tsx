@@ -31,6 +31,8 @@ export function ConnectionProvider({ children }: { children: ReactNode }) {
 
 export function useConnection(): ConnectionValue {
   const value = useContext(ConnectionContext);
-  if (!value) throw new Error('ConnectionProvider の外側で useConnection を呼び出しました');
+  if (!value) {
+    throw new Error('ConnectionProvider の外側で useConnection を呼び出しました');
+  }
   return value;
 }
