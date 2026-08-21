@@ -1,4 +1,5 @@
-import { DEFAULT_SETTINGS, LLM_RUNTIMES, type Settings } from '../../api/connection';
+import { LLM_RUNTIMES } from '../../api/llmRuntime';
+import { DEFAULT_SETTINGS, type Settings } from '../../api/settings';
 
 const KEY = 'settings';
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_SETTINGS } from '../../api/connection';
+import { DEFAULT_SETTINGS } from '../../api/settings';
 import { createSettingsStore } from './settings';
 
 const fakeStorage = () => {

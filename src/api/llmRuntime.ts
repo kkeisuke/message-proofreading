@@ -16,12 +16,11 @@ export const LLM_RUNTIMES = [
 
 export type LLMRuntimeId = (typeof LLM_RUNTIMES)[number]['id'];
 
-export type Settings = {
-  llmRuntimeId: LLMRuntimeId;
-  model: string | null;
-};
-
-export const DEFAULT_SETTINGS: Settings = { llmRuntimeId: 'model-runner', model: null };
-
+/**
+ * ID からランタイムの定義を引く。
+ *
+ * @param llmRuntimeId 引きたいランタイムの ID
+ * @returns baseUrl と llmStartHint を持つランタイムの定義
+ */
 export const getLLMRuntimeById = (llmRuntimeId: LLMRuntimeId) =>
   LLM_RUNTIMES.find((runtime) => runtime.id === llmRuntimeId)!;
