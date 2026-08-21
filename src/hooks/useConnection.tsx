@@ -17,9 +17,7 @@ type ConnectionValue = {
 
 const ConnectionContext = createContext<ConnectionValue | null>(null);
 
-/**
- * 接続状態を持つ。投機的なポーリングはせず、実際に通信した側が結果を報告する。
- */
+/** 投機的なポーリングはせず、実際に通信した側が結果を報告する。 */
 export function ConnectionProvider({ children }: { children: ReactNode }) {
   const [connected, setConnected] = useState<boolean | null>(null);
   const reportSuccess = useCallback(() => setConnected(true), []);

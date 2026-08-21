@@ -2,19 +2,21 @@ import type { ChatMessage, ChatStreamOptions } from '../../api/chat';
 import { LLMError } from '../../api/llmError';
 import { readChatChunk, splitServerSentEvents } from './chatStream';
 
-/**
- * tauri-plugin-http の fetch は RequestInit に加えて maxRedirections を受け取る。
- * scope 検査は最初の URL にしか効かないため、リダイレクト追跡は常に禁止する（N1）。
- */
+/** tauri-plugin-http の fetch は RequestInit に加えて maxRedirections を受け取る。 */
 export type FetchInit = RequestInit & { maxRedirections?: number };
 
 export type IFetch = (url: string, init?: FetchInit) => Promise<Response>;
 
 export type ChatConfig = { baseUrl: string; model: string };
 
+/** 事前検証で較正した値。案の多様性（F3）を担保する。 */
 const SAMPLING = { temperature: 0.7 };
 
-/** リダイレクトはローカルの OpenAI 互換 API に不要で、外部送信の経路になるため追跡しない。 */
+/**
+ * リダイレクトを追跡しない（N1）。
+ * capability の scope 検査は最初の URL にしか効かず、リダイレクト先は再照合されない。
+ * 追跡を許すと、localhost を先に掴んだプロセスの 308 応答で本文が外部へ出る。
+ */
 const NO_REDIRECT = { maxRedirections: 0 } as const;
 
 /** fetch 自体の失敗（接続不能）を LLMError('unreachable') に変換する。 */

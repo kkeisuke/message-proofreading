@@ -13,9 +13,9 @@ export function splitServerSentEvents(): TransformStream<string, string> {
   });
 }
 
-/** SSE イベント1件から取り出した内容。ストリーム内エラーは error として返す。 */
 export type ChatChunk = { kind: 'content'; content: string } | { kind: 'error'; message: string };
 
+/** 1 イベントに data 行は 1 つという前提に立ち、最初に解釈できた行で確定する。 */
 export function readChatChunk(event: string): ChatChunk | null {
   for (const line of event.split(/\r\n|\n|\r/)) {
     if (!line.startsWith('data:')) continue;
