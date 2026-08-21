@@ -3,17 +3,5 @@
     display: grid;
     gap: var(--space-2);
     padding: var(--space-2);
-
-    & fieldset {
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius);
-      padding: var(--space-2);
-      display: grid;
-      gap: var(--space-1);
-    }
-
-    & .settings-page-error {
-      color: var(--color-warn);
-    }
   }
 }

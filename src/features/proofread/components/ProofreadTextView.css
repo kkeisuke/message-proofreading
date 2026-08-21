@@ -9,20 +9,5 @@
     & .proofread-text-view-text {
       white-space: pre-wrap;
     }
-
-    & .proofread-text-view-error {
-      display: grid;
-      gap: var(--space-1);
-
-      & .proofread-text-view-error-state {
-        color: var(--color-warn);
-      }
-
-      & pre {
-        margin-block-start: var(--space-1);
-        white-space: pre-wrap;
-        word-break: break-all;
-      }
-    }
   }
 }

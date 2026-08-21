@@ -1,7 +1,10 @@
 import type { GenerateFn } from '../domain/proofread';
 import { useProofreadPage } from '../hooks/useProofreadPage';
 import { CopyButton } from './CopyButton';
+import { MessageInput } from './MessageInput';
 import { ModelNotSelectedView } from './ModelNotSelectedView';
+import { ProofreadButton } from './ProofreadButton';
+import { ProofreadErrorView } from './ProofreadErrorView';
 import { ProofreadTextView } from './ProofreadTextView';
 import { UsageSceneSelector } from './UsageSceneSelector';
 import './ProofreadPage.css';
@@ -17,27 +20,18 @@ export function ProofreadPage({ generate, llmStartHint }: Props) {
   return (
     <main className="proofread-page">
       <UsageSceneSelector value={page.scene} onChange={page.setUsageScene} />
-      <textarea
-        value={page.input}
-        onChange={(e) => page.setInput(e.currentTarget.value)}
-        placeholder="校正したいメッセージを貼り付け"
-        rows={5}
+      <MessageInput value={page.input} onChange={page.setInput} />
+      <ProofreadButton
+        phase={page.phase}
+        canRun={page.canRun}
+        onRun={page.run}
+        onCancel={page.cancel}
       />
-      {running ? (
-        <button type="button" onClick={page.cancel}>
-          中断
-        </button>
+      {page.error ? (
+        <ProofreadErrorView error={page.error} llmStartHint={llmStartHint} />
       ) : (
-        <button type="button" disabled={!page.canRun} onClick={page.run}>
-          校正する
-        </button>
+        <ProofreadTextView proofreadText={page.proofreadText} running={running} />
       )}
-      <ProofreadTextView
-        proofreadText={page.proofreadText}
-        running={running}
-        error={page.error}
-        llmStartHint={llmStartHint}
-      />
       <CopyButton text={page.proofreadText} disabled={running || !page.proofreadText} />
     </main>
   );

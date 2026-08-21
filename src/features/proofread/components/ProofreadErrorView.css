@@ -1,0 +1,22 @@
+@layer components {
+  .proofread-error-view {
+    container-type: inline-size;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--space-2);
+    min-height: 6lh;
+    display: grid;
+    align-content: start;
+    gap: var(--space-1);
+
+    & .proofread-error-view-state {
+      color: var(--color-warn);
+    }
+
+    & pre {
+      margin-block-start: var(--space-1);
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+  }
+}

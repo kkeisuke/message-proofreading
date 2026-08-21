@@ -12,8 +12,10 @@ import type { UsageScene } from '../domain/prompts';
  */
 export type ProofreadError = { kind: LLMErrorKind; message: string; raw: string };
 
+export type ProofreadPhase = 'idle' | 'running';
+
 export function useProofread(generate: GenerateFn | null) {
-  const [phase, setPhase] = useState<'idle' | 'running'>('idle');
+  const [phase, setPhase] = useState<ProofreadPhase>('idle');
   const [proofreadText, setProofreadText] = useState('');
   const [error, setError] = useState<ProofreadError | null>(null);
   const abortRef = useRef<AbortController | null>(null);

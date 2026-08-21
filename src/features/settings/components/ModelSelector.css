@@ -1,0 +1,13 @@
+@layer components {
+  .model-selector {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--space-2);
+    display: grid;
+    gap: var(--space-1);
+
+    & .model-selector-error {
+      color: var(--color-warn);
+    }
+  }
+}
