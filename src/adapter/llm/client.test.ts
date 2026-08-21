@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { LlmError } from '../../api/llmError';
-import { listModels, streamChat, type FetchInit, type FetchLike } from './client';
+import { LLMError } from '../../api/llmError';
+import { listModels, streamChat, type FetchInit, type IFetch } from './client';
 
 const sseResponse = (events: string[]): Response =>
   new Response(events.map((e) => `data: ${e}\n\n`).join(''), { status: 200 });
@@ -11,7 +11,7 @@ type Call = { url: string; init?: FetchInit };
 
 const recorder = (respond: () => Response) => {
   const calls: Call[] = [];
-  const fetchFn: FetchLike = async (url, init) => {
+  const fetchFn: IFetch = async (url, init) => {
     calls.push({ url, init });
     return respond();
   };
@@ -20,7 +20,7 @@ const recorder = (respond: () => Response) => {
 
 describe('streamChat', () => {
   it('delta を連結して全文を返し、onChunk に累積を渡す', async () => {
-    const fetchFn: FetchLike = async () =>
+    const fetchFn: IFetch = async () =>
       sseResponse([deltaEvent('こん'), deltaEvent('にちは'), '[DONE]']);
     const acc: string[] = [];
     const result = await streamChat(
@@ -63,21 +63,21 @@ describe('streamChat', () => {
   });
 
   it('HTTP 404 は例外にする', async () => {
-    const fetchFn: FetchLike = async () => new Response('ng', { status: 404 });
+    const fetchFn: IFetch = async () => new Response('ng', { status: 404 });
     await expect(streamChat(fetchFn, { baseUrl: 'http://x', model: 'm' }, [])).rejects.toThrow(
       '404',
     );
   });
 
   it('HTTP 500 は例外にする', async () => {
-    const fetchFn: FetchLike = async () => new Response('ng', { status: 500 });
+    const fetchFn: IFetch = async () => new Response('ng', { status: 500 });
     await expect(streamChat(fetchFn, { baseUrl: 'http://x', model: 'm' }, [])).rejects.toThrow(
       '500',
     );
   });
 
   it('ストリーム内のエラーイベントは例外にする', async () => {
-    const fetchFn: FetchLike = async () =>
+    const fetchFn: IFetch = async () =>
       sseResponse([JSON.stringify({ error: { message: 'context length exceeded' } })]);
     await expect(streamChat(fetchFn, { baseUrl: 'http://x', model: 'm' }, [])).rejects.toThrow(
       'context length exceeded',
@@ -85,24 +85,24 @@ describe('streamChat', () => {
   });
 
   it('delta が一度も来ない応答は例外にする', async () => {
-    const fetchFn: FetchLike = async () => sseResponse(['[DONE]']);
+    const fetchFn: IFetch = async () => sseResponse(['[DONE]']);
     await expect(streamChat(fetchFn, { baseUrl: 'http://x', model: 'm' }, [])).rejects.toThrow(
       '校正案が返りませんでした',
     );
   });
 
   it('接続不能なら unreachable、それ以外は other/model-not-found として種別を持つ', async () => {
-    const catchErr = (fn: FetchLike) =>
+    const catchErr = (fn: IFetch) =>
       streamChat(fn, { baseUrl: 'http://x', model: 'm' }, []).catch((e: unknown) => e);
 
-    const networkFail: FetchLike = async () => {
+    const networkFail: IFetch = async () => {
       throw new TypeError('Failed to fetch');
     };
-    const notFound: FetchLike = async () => new Response('ng', { status: 404 });
-    const serverError: FetchLike = async () => new Response('ng', { status: 500 });
-    const streamError: FetchLike = async () =>
+    const notFound: IFetch = async () => new Response('ng', { status: 404 });
+    const serverError: IFetch = async () => new Response('ng', { status: 500 });
+    const streamError: IFetch = async () =>
       sseResponse([JSON.stringify({ error: { message: 'context length exceeded' } })]);
-    const emptyResponse: FetchLike = async () => sseResponse(['[DONE]']);
+    const emptyResponse: IFetch = async () => sseResponse(['[DONE]']);
 
     const [unreachable, modelNotFound, other1, other2, other3] = await Promise.all([
       catchErr(networkFail),
@@ -112,22 +112,22 @@ describe('streamChat', () => {
       catchErr(emptyResponse),
     ]);
 
-    expect(unreachable).toBeInstanceOf(LlmError);
-    if (unreachable instanceof LlmError) expect(unreachable.kind).toBe('unreachable');
+    expect(unreachable).toBeInstanceOf(LLMError);
+    if (unreachable instanceof LLMError) expect(unreachable.kind).toBe('unreachable');
 
-    expect(modelNotFound).toBeInstanceOf(LlmError);
-    if (modelNotFound instanceof LlmError) expect(modelNotFound.kind).toBe('model-not-found');
+    expect(modelNotFound).toBeInstanceOf(LLMError);
+    if (modelNotFound instanceof LLMError) expect(modelNotFound.kind).toBe('model-not-found');
 
     for (const other of [other1, other2, other3]) {
-      expect(other).toBeInstanceOf(LlmError);
-      if (other instanceof LlmError) expect(other.kind).toBe('other');
+      expect(other).toBeInstanceOf(LLMError);
+      if (other instanceof LLMError) expect(other.kind).toBe('other');
     }
   });
 });
 
 describe('listModels', () => {
   it('モデル ID の一覧を返す', async () => {
-    const fetchFn: FetchLike = async () =>
+    const fetchFn: IFetch = async () =>
       new Response(JSON.stringify({ data: [{ id: 'a' }, { id: 'b' }] }), { status: 200 });
     expect(await listModels(fetchFn, 'http://x')).toEqual(['a', 'b']);
   });
@@ -143,18 +143,18 @@ describe('listModels', () => {
   });
 
   it('接続不能なら unreachable として種別を持つ', async () => {
-    const fetchFn: FetchLike = async () => {
+    const fetchFn: IFetch = async () => {
       throw new TypeError('Failed to fetch');
     };
     const err = await listModels(fetchFn, 'http://x').catch((e: unknown) => e);
-    expect(err).toBeInstanceOf(LlmError);
-    if (err instanceof LlmError) expect(err.kind).toBe('unreachable');
+    expect(err).toBeInstanceOf(LLMError);
+    if (err instanceof LLMError) expect(err.kind).toBe('unreachable');
   });
 
   it('HTTP 404 は model-not-found として種別を持つ', async () => {
-    const fetchFn: FetchLike = async () => new Response('ng', { status: 404 });
+    const fetchFn: IFetch = async () => new Response('ng', { status: 404 });
     const err = await listModels(fetchFn, 'http://x').catch((e: unknown) => e);
-    expect(err).toBeInstanceOf(LlmError);
-    if (err instanceof LlmError) expect(err.kind).toBe('model-not-found');
+    expect(err).toBeInstanceOf(LLMError);
+    if (err instanceof LLMError) expect(err.kind).toBe('model-not-found');
   });
 });

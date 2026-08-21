@@ -6,7 +6,7 @@ describe('proofread（検証なし版）', () => {
   it('生成結果を整形して返す', async () => {
     const generate: GenerateFn = async () => ' 「校正済みの本文です。」 ';
     const result = await proofread('入力', 'business', generate);
-    expect(result.proposal).toBe('校正済みの本文です。');
+    expect(result.proofreadText).toBe('校正済みの本文です。');
   });
 
   it('シーンと入力からメッセージ列を組み立てて generate に渡す', async () => {

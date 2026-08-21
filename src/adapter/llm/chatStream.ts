@@ -1,4 +1,4 @@
-export function sseEvents(): TransformStream<string, string> {
+export function splitServerSentEvents(): TransformStream<string, string> {
   let buffer = '';
   return new TransformStream({
     transform(chunk, controller) {
@@ -14,9 +14,9 @@ export function sseEvents(): TransformStream<string, string> {
 }
 
 /** SSE イベント1件から取り出した内容。ストリーム内エラーは error として返す。 */
-export type SseDelta = { kind: 'content'; content: string } | { kind: 'error'; message: string };
+export type ChatChunk = { kind: 'content'; content: string } | { kind: 'error'; message: string };
 
-export function extractDelta(event: string): SseDelta | null {
+export function readChatChunk(event: string): ChatChunk | null {
   for (const line of event.split(/\r\n|\n|\r/)) {
     if (!line.startsWith('data:')) continue;
     const data = line.slice(5).trim();

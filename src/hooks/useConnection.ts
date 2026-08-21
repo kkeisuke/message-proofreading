@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from 'react';
-import { LlmError } from '../api/llmError';
+import { LLMError } from '../api/llmError';
 
 /**
  * 接続状態をメモリ上に持つストア。
@@ -29,7 +29,7 @@ export function reportConnection(ok: boolean): void {
  * 判定が書き手ごとにずれないよう、ここに集約する。
  */
 export function reportConnectionError(error: unknown): void {
-  reportConnection(error instanceof LlmError && error.kind !== 'unreachable');
+  reportConnection(error instanceof LLMError && error.kind !== 'unreachable');
 }
 
 /** useSyncExternalStore の subscribe。戻り値は購読解除。 */

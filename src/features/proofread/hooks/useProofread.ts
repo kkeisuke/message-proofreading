@@ -1,20 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
-import { LlmError, type LlmErrorKind } from '../../../api/llmError';
-import { cleanup } from '../domain/cleanup';
+import { LLMError, type LLMErrorKind } from '../../../api/llmError';
+import { cleanGeneratedText } from '../domain/cleanGeneratedText';
 import { proofread } from '../domain/proofread';
 import type { GenerateFn } from '../domain/proofread';
-import type { Scene } from '../domain/prompts';
+import type { UsageScene } from '../domain/prompts';
 
 /**
  * 校正失敗の表示用情報。
  * kind で「接続できません」とそれ以外の失敗を分け、message は見出しに、
  * raw は <details> に生のエラー文字列として出す。
  */
-export type ProofreadError = { kind: LlmErrorKind; message: string; raw: string };
+export type ProofreadError = { kind: LLMErrorKind; message: string; raw: string };
 
 export function useProofread(generate: GenerateFn) {
   const [phase, setPhase] = useState<'idle' | 'running'>('idle');
-  const [proposal, setProposal] = useState('');
+  const [proofreadText, setProofreadText] = useState('');
   const [error, setError] = useState<ProofreadError | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
@@ -24,12 +24,12 @@ export function useProofread(generate: GenerateFn) {
     };
   }, []);
 
-  const run = async (input: string, scene: Scene) => {
+  const run = async (input: string, scene: UsageScene) => {
     abortRef.current?.abort();
     const ac = new AbortController();
     abortRef.current = ac;
     setPhase('running');
-    setProposal('');
+    setProofreadText('');
     setError(null);
     // ストリーミング中は生テキストを表示し、終了時に必ず整形済みへ差し替える。
     let raw = '';
@@ -40,19 +40,19 @@ export function useProofread(generate: GenerateFn) {
           // 中断直後に届いた先行 run のチャンクが後続 run の表示を上書きしないようにする。
           if (abortRef.current !== ac) return;
           raw = acc;
-          setProposal(acc);
+          setProofreadText(acc);
         },
       });
-      if (abortRef.current === ac) setProposal(result.proposal);
+      if (abortRef.current === ac) setProofreadText(result.proofreadText);
     } catch (e) {
       if (abortRef.current !== ac) return;
       if (ac.signal.aborted) {
         // 中断はエラー扱いにしない。途中まで生成された分を整形して残す。
-        setProposal(cleanup(raw));
+        setProofreadText(cleanGeneratedText(raw));
       } else {
-        setProposal('');
+        setProofreadText('');
         setError(
-          e instanceof LlmError
+          e instanceof LLMError
             ? { kind: e.kind, message: e.message, raw: String(e) }
             : { kind: 'other', message: String(e), raw: String(e) },
         );
@@ -64,5 +64,5 @@ export function useProofread(generate: GenerateFn) {
 
   const cancel = () => abortRef.current?.abort();
 
-  return { phase, proposal, error, run, cancel };
+  return { phase, proofreadText, error, run, cancel };
 }

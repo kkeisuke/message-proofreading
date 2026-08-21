@@ -10,9 +10,9 @@ const store = createSettingsStore(localStorage);
 
 export const Route = createFileRoute('/settings')({
   loader: async () => {
-    const { presetId } = store.load();
+    const { llmRuntimeId } = store.load();
     try {
-      const models = await listModels(tauriFetch, baseUrlOf(presetId));
+      const models = await listModels(tauriFetch, baseUrlOf(llmRuntimeId));
       reportConnection(true);
       return { models, error: null };
     } catch (e) {

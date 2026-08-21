@@ -33,7 +33,7 @@ const unquote = (text: string): string => {
   return text;
 };
 
-export const cleanup = (raw: string): string =>
+export const cleanGeneratedText = (raw: string): string =>
   unquote(
     raw
       .replace(/<think(ing)?>[\s\S]*?<\/think(ing)?>/gi, '')

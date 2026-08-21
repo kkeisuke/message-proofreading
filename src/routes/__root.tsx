@@ -17,7 +17,7 @@ export const Route = createRootRoute({
    */
   loader: async () => {
     try {
-      await listModels(tauriFetch, baseUrlOf(store.load().presetId));
+      await listModels(tauriFetch, baseUrlOf(store.load().llmRuntimeId));
       reportConnection(true);
     } catch (e) {
       reportConnectionError(e);

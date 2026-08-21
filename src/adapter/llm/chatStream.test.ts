@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { extractDelta, sseEvents } from './sse';
+import { readChatChunk, splitServerSentEvents } from './chatStream';
 
 async function collect(chunks: string[]): Promise<string[]> {
   const out: string[] = [];
@@ -8,7 +8,7 @@ async function collect(chunks: string[]): Promise<string[]> {
       for (const chunk of chunks) c.enqueue(chunk);
       c.close();
     },
-  }).pipeThrough(sseEvents());
+  }).pipeThrough(splitServerSentEvents());
   const reader = stream.getReader();
   for (;;) {
     const { done, value } = await reader.read();
@@ -18,7 +18,7 @@ async function collect(chunks: string[]): Promise<string[]> {
   return out;
 }
 
-describe('sseEvents', () => {
+describe('splitServerSentEvents', () => {
   it('空行区切りでイベントに分割する', async () => {
     expect(await collect(['data: a\n\ndata: b\n\n'])).toEqual(['data: a', 'data: b']);
   });
@@ -47,49 +47,49 @@ describe('sseEvents', () => {
   });
 });
 
-describe('extractDelta', () => {
+describe('readChatChunk', () => {
   it('delta.content を取り出す', () => {
     const event = `data: ${JSON.stringify({ choices: [{ delta: { content: 'こん' } }] })}`;
-    expect(extractDelta(event)).toEqual({ kind: 'content', content: 'こん' });
+    expect(readChatChunk(event)).toEqual({ kind: 'content', content: 'こん' });
   });
 
   it('CRLF 改行のイベントでも delta.content を取り出す', () => {
     const event = `event: message\r\ndata: ${JSON.stringify({
       choices: [{ delta: { content: 'こん' } }],
     })}\r\n`;
-    expect(extractDelta(event)).toEqual({ kind: 'content', content: 'こん' });
+    expect(readChatChunk(event)).toEqual({ kind: 'content', content: 'こん' });
   });
 
   it('[DONE] と壊れた JSON は null', () => {
-    expect(extractDelta('data: [DONE]')).toBeNull();
-    expect(extractDelta('data: {broken')).toBeNull();
+    expect(readChatChunk('data: [DONE]')).toBeNull();
+    expect(readChatChunk('data: {broken')).toBeNull();
   });
 
   it('error フィールドを持つイベントはエラーとして返す', () => {
     const event = `data: ${JSON.stringify({ error: { message: 'context length exceeded' } })}`;
-    expect(extractDelta(event)).toEqual({ kind: 'error', message: 'context length exceeded' });
+    expect(readChatChunk(event)).toEqual({ kind: 'error', message: 'context length exceeded' });
   });
 
   it('error が文字列でもエラーとして返す', () => {
-    expect(extractDelta(`data: ${JSON.stringify({ error: 'busy' })}`)).toEqual({
+    expect(readChatChunk(`data: ${JSON.stringify({ error: 'busy' })}`)).toEqual({
       kind: 'error',
       message: 'busy',
     });
   });
 
   it('error が false はエラー扱いしない', () => {
-    expect(extractDelta(`data: ${JSON.stringify({ error: false })}`)).toBeNull();
+    expect(readChatChunk(`data: ${JSON.stringify({ error: false })}`)).toBeNull();
   });
 
   it('error が空文字はエラー扱いしない', () => {
-    expect(extractDelta(`data: ${JSON.stringify({ error: '' })}`)).toBeNull();
+    expect(readChatChunk(`data: ${JSON.stringify({ error: '' })}`)).toBeNull();
   });
 
   it('error が true（オブジェクトでも文字列でもない）はエラー扱いしない', () => {
-    expect(extractDelta(`data: ${JSON.stringify({ error: true })}`)).toBeNull();
+    expect(readChatChunk(`data: ${JSON.stringify({ error: true })}`)).toBeNull();
   });
 
   it('error が 0 はエラー扱いしない', () => {
-    expect(extractDelta(`data: ${JSON.stringify({ error: 0 })}`)).toBeNull();
+    expect(readChatChunk(`data: ${JSON.stringify({ error: 0 })}`)).toBeNull();
   });
 });

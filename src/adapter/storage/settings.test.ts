@@ -17,8 +17,8 @@ describe('settings storage', () => {
 
   it('保存した値を読み戻せる', () => {
     const s = fakeStorage();
-    saveSettings(s, { presetId: 'ollama', model: 'gemma4:e4b' });
-    expect(loadSettings(s)).toEqual({ presetId: 'ollama', model: 'gemma4:e4b' });
+    saveSettings(s, { llmRuntimeId: 'ollama', model: 'gemma4:e4b' });
+    expect(loadSettings(s)).toEqual({ llmRuntimeId: 'ollama', model: 'gemma4:e4b' });
   });
 
   it('壊れた JSON は既定値にフォールバックする', () => {

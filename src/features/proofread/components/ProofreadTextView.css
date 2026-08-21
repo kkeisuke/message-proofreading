@@ -1,20 +1,20 @@
 @layer components {
-  .proposal-view {
+  .proofread-text-view {
     container-type: inline-size;
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
     padding: var(--space-2);
     min-height: 6lh;
 
-    & .proposal-view-text {
+    & .proofread-text-view-text {
       white-space: pre-wrap;
     }
 
-    & .proposal-view-error {
+    & .proofread-text-view-error {
       display: grid;
       gap: var(--space-1);
 
-      & .proposal-view-error-state {
+      & .proofread-text-view-error-state {
         color: var(--color-warn);
       }
 

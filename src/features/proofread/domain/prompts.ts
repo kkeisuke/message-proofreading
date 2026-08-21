@@ -1,6 +1,6 @@
 import type { ChatMessage } from '../../../api/chat';
 
-export type Scene = 'business' | 'casual';
+export type UsageScene = 'business' | 'casual';
 
 const COMMON_RULES = [
   'あなたは日本語の校正アシスタントです。入力された短いメッセージを校正し、校正後の本文だけを返します。',
@@ -11,7 +11,7 @@ const COMMON_RULES = [
   '- 出力は校正後の本文のみ。説明・前置き・引用符は付けない。',
 ];
 
-const SYSTEM_PROMPTS: Record<Scene, string> = {
+const SYSTEM_PROMPTS: Record<UsageScene, string> = {
   business: [...COMMON_RULES, '- 文体は整ったですます調にする。過剰な敬語にはしない。'].join('\n'),
   casual: [
     ...COMMON_RULES,
@@ -22,7 +22,7 @@ const SYSTEM_PROMPTS: Record<Scene, string> = {
 
 type Example = { user: string; assistant: string };
 
-const EXAMPLES: Record<Scene, Example[]> = {
+const EXAMPLES: Record<UsageScene, Example[]> = {
   business: [
     {
       user: 'お疲れさまです。さきほどの資料、確認しまた。問題ないと思います。',
@@ -56,7 +56,7 @@ const framePrompt = (text: string): string =>
   text +
   '\n---';
 
-export function buildMessages(text: string, scene: Scene): ChatMessage[] {
+export function buildMessages(text: string, scene: UsageScene): ChatMessage[] {
   return [
     { role: 'system', content: SYSTEM_PROMPTS[scene] },
     ...EXAMPLES[scene].flatMap(({ user, assistant }): ChatMessage[] => [

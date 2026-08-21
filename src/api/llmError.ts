@@ -9,14 +9,14 @@
  * api/ は LLM API との契約を定義する側で、I/O を持たない。
  * 実際に通信するのは adapter/llm で、この型は adapter と feature の双方から参照される。
  */
-export type LlmErrorKind = 'unreachable' | 'model-not-found' | 'other';
+export type LLMErrorKind = 'unreachable' | 'model-not-found' | 'other';
 
-export class LlmError extends Error {
-  readonly kind: LlmErrorKind;
+export class LLMError extends Error {
+  readonly kind: LLMErrorKind;
 
-  constructor(kind: LlmErrorKind, message: string) {
+  constructor(kind: LLMErrorKind, message: string) {
     super(message);
-    this.name = 'LlmError';
+    this.name = 'LLMError';
     this.kind = kind;
   }
 }
