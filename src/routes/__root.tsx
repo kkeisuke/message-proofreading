@@ -1,32 +1,46 @@
 import { fetch as tauriFetch } from '@tauri-apps/plugin-http';
 import { createRootRoute, Outlet } from '@tanstack/react-router';
+import { useEffect } from 'react';
 import { listModels } from '../adapter/llm/client';
-import { createSettingsStore } from '../adapter/storage/settings';
 import { baseUrlOf } from '../api/connection';
 import { AppHeader } from '../components/AppHeader';
-import { reportConnection, reportConnectionError } from '../hooks/useConnection';
+import { useSettings } from '../features/settings';
+import { useConnection } from '../hooks/useConnection';
 
-const store = createSettingsStore(localStorage);
+export const Route = createRootRoute({ component: RootLayout });
 
-export const Route = createRootRoute({
+function RootLayout() {
+  const { settings } = useSettings();
+  const { reportSuccess, reportFailure } = useConnection();
+  const baseUrl = baseUrlOf(settings.llmRuntimeId);
+
   /**
-   * 起動時に 1 回だけ接続を確認する。以降の接続状態は、設定画面のローダーと校正の
-   * generate が実際の通信結果を報告して更新する。
+   * 起動時と接続先の変更時に到達可否を確かめる。以降の接続状態は、校正とモデル一覧の
+   * 実際の通信結果が更新する。
    *
-   * 接続先は設定変更に追随するよう、そのときの設定から読む。
+   * active フラグは StrictMode の二重実行と、接続先を切り替えたときに古い結果が
+   * 新しい結果を追い越すのを防ぐ。
    */
-  loader: async () => {
-    try {
-      await listModels(tauriFetch, baseUrlOf(store.load().llmRuntimeId));
-      reportConnection(true);
-    } catch (e) {
-      reportConnectionError(e);
-    }
-  },
-  component: () => (
+  useEffect(() => {
+    let active = true;
+    const check = async () => {
+      try {
+        await listModels(tauriFetch, baseUrl);
+        if (active) reportSuccess();
+      } catch (e) {
+        if (active) reportFailure(e);
+      }
+    };
+    void check();
+    return () => {
+      active = false;
+    };
+  }, [baseUrl, reportSuccess, reportFailure]);
+
+  return (
     <>
       <AppHeader />
       <Outlet />
     </>
-  ),
-});
+  );
+}

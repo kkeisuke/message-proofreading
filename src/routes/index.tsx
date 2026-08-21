@@ -5,12 +5,13 @@ import { streamChat } from '../adapter/llm/client';
 import { baseUrlOf, llmStartHintOf } from '../api/connection';
 import { ProofreadPage, type GenerateFn } from '../features/proofread';
 import { useSettings } from '../features/settings';
-import { reportConnection, reportConnectionError } from '../hooks/useConnection';
+import { useConnection } from '../hooks/useConnection';
 
 export const Route = createFileRoute('/')({ component: IndexRoute });
 
 function IndexRoute() {
   const { settings } = useSettings();
+  const { reportSuccess, reportFailure } = useConnection();
   const { llmRuntimeId, model } = settings;
   const baseUrl = baseUrlOf(llmRuntimeId);
 
@@ -20,16 +21,16 @@ function IndexRoute() {
     return async (messages, opts) => {
       try {
         const proofreadText = await streamChat(tauriFetch, config, messages, opts);
-        reportConnection(true);
+        reportSuccess();
         return proofreadText;
       } catch (e) {
         // 中断は接続状態を変えない。中断された fetch は unreachable になるため先に見分ける。
         if (opts.signal?.aborted) throw e;
-        reportConnectionError(e);
+        reportFailure(e);
         throw e;
       }
     };
-  }, [baseUrl, model]);
+  }, [baseUrl, model, reportSuccess, reportFailure]);
 
   return <ProofreadPage generate={generate} llmStartHint={llmStartHintOf(llmRuntimeId)} />;
 }

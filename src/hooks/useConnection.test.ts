@@ -1,64 +1,17 @@
-import { expect, test, vi } from 'vitest';
+import { expect, test } from 'vitest';
+import { LLMError } from '../api/llmError';
+import { isLLMReachable } from './useConnection';
 
-/**
- * ストアはモジュールスコープに状態を持つため、テストごとに読み込み直して独立させる。
- * useSyncExternalStore を使う hook 本体は DOM が要るためここでは扱わない。
- */
-const load = async () => {
-  vi.resetModules();
-  return import('./useConnection');
-};
-
-test('報告前のスナップショットは null', async () => {
-  const { getConnectionSnapshot } = await load();
-  expect(getConnectionSnapshot()).toBe(null);
+test('到達できなかった失敗は未接続と判定する', () => {
+  expect(isLLMReachable(new LLMError('unreachable', '接続できませんでした'))).toBe(false);
 });
 
-test('報告した値がスナップショットに反映される', async () => {
-  const { getConnectionSnapshot, reportConnection } = await load();
-  reportConnection(true);
-  expect(getConnectionSnapshot()).toBe(true);
-  reportConnection(false);
-  expect(getConnectionSnapshot()).toBe(false);
+test('到達したうえでの失敗は接続できている証拠として扱う', () => {
+  expect(isLLMReachable(new LLMError('model-not-found', 'モデルが見つかりません'))).toBe(true);
+  expect(isLLMReachable(new LLMError('other', 'HTTP 500'))).toBe(true);
 });
 
-test('値が変わったときだけ購読者に通知する', async () => {
-  const { reportConnection, subscribeConnection } = await load();
-  let calls = 0;
-  subscribeConnection(() => {
-    calls += 1;
-  });
-
-  reportConnection(true);
-  expect(calls).toBe(1);
-
-  reportConnection(true);
-  expect(calls).toBe(1);
-
-  reportConnection(false);
-  expect(calls).toBe(2);
-});
-
-test('購読者は全員が通知を受ける', async () => {
-  const { reportConnection, subscribeConnection } = await load();
-  const seen: string[] = [];
-  subscribeConnection(() => seen.push('a'));
-  subscribeConnection(() => seen.push('b'));
-
-  reportConnection(true);
-
-  expect(seen).toEqual(['a', 'b']);
-});
-
-test('購読解除した後は通知されない', async () => {
-  const { reportConnection, subscribeConnection } = await load();
-  let calls = 0;
-  const unsubscribe = subscribeConnection(() => {
-    calls += 1;
-  });
-
-  unsubscribe();
-  reportConnection(true);
-
-  expect(calls).toBe(0);
+test('種別の分からない失敗は未接続と判定する', () => {
+  expect(isLLMReachable(new Error('unknown'))).toBe(false);
+  expect(isLLMReachable('文字列')).toBe(false);
 });
