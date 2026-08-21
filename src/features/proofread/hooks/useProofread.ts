@@ -12,7 +12,7 @@ import type { UsageScene } from '../domain/prompts';
  */
 export type ProofreadError = { kind: LLMErrorKind; message: string; raw: string };
 
-export function useProofread(generate: GenerateFn) {
+export function useProofread(generate: GenerateFn | null) {
   const [phase, setPhase] = useState<'idle' | 'running'>('idle');
   const [proofreadText, setProofreadText] = useState('');
   const [error, setError] = useState<ProofreadError | null>(null);
@@ -25,6 +25,7 @@ export function useProofread(generate: GenerateFn) {
   }, []);
 
   const run = async (input: string, scene: UsageScene) => {
+    if (!generate) return;
     abortRef.current?.abort();
     const ac = new AbortController();
     abortRef.current = ac;

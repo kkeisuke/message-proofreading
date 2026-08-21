@@ -1,0 +1,7 @@
+@layer components {
+  .model-not-selected-view {
+    padding: var(--space-2);
+    max-width: 40rem;
+    margin-inline: auto;
+  }
+}
