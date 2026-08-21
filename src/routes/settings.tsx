@@ -6,6 +6,7 @@ import { baseUrlOf } from '../api/connection';
 import { SettingsForm } from '../features/settings';
 import { reportConnection, reportConnectionError } from '../hooks/useConnection';
 
+// loader は React の外で走るため Context を読めない。Task 4 で loader ごと廃止する。
 const store = createSettingsStore(localStorage);
 
 export const Route = createFileRoute('/settings')({
@@ -20,20 +21,15 @@ export const Route = createFileRoute('/settings')({
       return { models: [], error: String(e) };
     }
   },
-  component: SettingsPage,
+  component: SettingsRoute,
 });
 
-function SettingsPage() {
+function SettingsRoute() {
   const { models, error } = Route.useLoaderData();
   const router = useRouter();
   return (
     <main>
-      <SettingsForm
-        store={store}
-        models={models}
-        error={error}
-        onPresetChange={() => router.invalidate()}
-      />
+      <SettingsForm models={models} error={error} onLLMRuntimeChange={() => router.invalidate()} />
     </main>
   );
 }

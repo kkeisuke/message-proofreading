@@ -1,23 +1,21 @@
-import { LLM_RUNTIMES, type Settings } from '../../../api/connection';
-import type { SettingsStore } from '../domain/settingsStore';
+import { LLM_RUNTIMES, llmStartHintOf, type Settings } from '../../../api/connection';
 import { useSettings } from '../hooks/useSettings';
 import './SettingsForm.css';
 
 type Props = {
-  store: SettingsStore;
   models: string[];
   error: string | null;
-  onPresetChange?: () => void;
+  onLLMRuntimeChange?: () => void;
 };
 
-export function SettingsForm({ store, models, error, onPresetChange }: Props) {
-  const { settings, save } = useSettings(store);
+export function SettingsForm({ models, error, onLLMRuntimeChange }: Props) {
+  const { settings, saveSettings } = useSettings();
 
-  const setPreset = (llmRuntimeId: Settings['llmRuntimeId']) => {
-    save({ llmRuntimeId, model: null });
-    onPresetChange?.();
+  const setLLMRuntime = (llmRuntimeId: Settings['llmRuntimeId']) => {
+    saveSettings({ llmRuntimeId, model: null });
+    onLLMRuntimeChange?.();
   };
-  const setModel = (model: string) => save({ ...settings, model });
+  const setModel = (model: string) => saveSettings({ ...settings, model });
 
   return (
     <form className="settings-form">
@@ -27,9 +25,9 @@ export function SettingsForm({ store, models, error, onPresetChange }: Props) {
           <label key={runtime.id}>
             <input
               type="radio"
-              name="preset"
+              name="llm-runtime"
               checked={settings.llmRuntimeId === runtime.id}
-              onChange={() => setPreset(runtime.id)}
+              onChange={() => setLLMRuntime(runtime.id)}
             />
             {runtime.label}
           </label>
@@ -40,8 +38,7 @@ export function SettingsForm({ store, models, error, onPresetChange }: Props) {
         <legend>モデル</legend>
         {error ? (
           <p className="settings-form-error" role="alert">
-            接続できません。
-            {LLM_RUNTIMES.find((runtime) => runtime.id === settings.llmRuntimeId)!.llmStartHint}
+            接続できません。{llmStartHintOf(settings.llmRuntimeId)}
           </p>
         ) : (
           <select value={settings.model ?? ''} onChange={(e) => setModel(e.currentTarget.value)}>
