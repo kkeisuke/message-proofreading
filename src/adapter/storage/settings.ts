@@ -6,11 +6,14 @@ type IStorage = Pick<Storage, 'getItem' | 'setItem'>;
 
 function loadSettings(storage: IStorage): Settings {
   const raw = storage.getItem(KEY);
-  if (!raw) return DEFAULT_SETTINGS;
+  if (!raw) {
+    return DEFAULT_SETTINGS;
+  }
   try {
     const parsed = JSON.parse(raw) as Partial<Settings>;
-    if (!LLM_RUNTIMES.some((runtime) => runtime.id === parsed.llmRuntimeId))
+    if (!LLM_RUNTIMES.some((runtime) => runtime.id === parsed.llmRuntimeId)) {
       return DEFAULT_SETTINGS;
+    }
     return {
       llmRuntimeId: parsed.llmRuntimeId as Settings['llmRuntimeId'],
       model: parsed.model ?? null,

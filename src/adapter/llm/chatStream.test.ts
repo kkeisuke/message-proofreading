@@ -5,14 +5,18 @@ async function collect(chunks: string[]): Promise<string[]> {
   const out: string[] = [];
   const stream = new ReadableStream<string>({
     start(c) {
-      for (const chunk of chunks) c.enqueue(chunk);
+      for (const chunk of chunks) {
+        c.enqueue(chunk);
+      }
       c.close();
     },
   }).pipeThrough(splitServerSentEvents());
   const reader = stream.getReader();
   for (;;) {
     const { done, value } = await reader.read();
-    if (done) break;
+    if (done) {
+      break;
+    }
     out.push(value);
   }
   return out;
