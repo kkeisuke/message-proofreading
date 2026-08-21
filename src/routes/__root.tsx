@@ -2,7 +2,7 @@ import { fetch as tauriFetch } from '@tauri-apps/plugin-http';
 import { createRootRoute, Outlet } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { listModels } from '../adapter/llm/client';
-import { baseUrlOf } from '../api/connection';
+import { getLLMRuntimeById } from '../api/connection';
 import { AppHeader } from '../components/AppHeader';
 import { useSettings } from '../features/settings';
 import { useConnection } from '../hooks/useConnection';
@@ -12,7 +12,7 @@ export const Route = createRootRoute({ component: RootLayout });
 function RootLayout() {
   const { settings } = useSettings();
   const { reportSuccess, reportFailure } = useConnection();
-  const baseUrl = baseUrlOf(settings.llmRuntimeId);
+  const { baseUrl } = getLLMRuntimeById(settings.llmRuntimeId);
 
   /**
    * 起動時と接続先の変更時に到達可否を確かめる。以降の接続状態は、校正とモデル一覧の

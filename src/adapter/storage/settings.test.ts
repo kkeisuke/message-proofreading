@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { DEFAULT_SETTINGS } from '../../api/connection';
-import { loadSettings, saveSettings } from './settings';
+import { createSettingsStore } from './settings';
 
 const fakeStorage = () => {
   const map = new Map<string, string>();
@@ -12,18 +12,18 @@ const fakeStorage = () => {
 
 describe('settings storage', () => {
   it('未保存なら既定値を返す', () => {
-    expect(loadSettings(fakeStorage())).toEqual(DEFAULT_SETTINGS);
+    expect(createSettingsStore(fakeStorage()).load()).toEqual(DEFAULT_SETTINGS);
   });
 
   it('保存した値を読み戻せる', () => {
-    const s = fakeStorage();
-    saveSettings(s, { llmRuntimeId: 'ollama', model: 'gemma4:e4b' });
-    expect(loadSettings(s)).toEqual({ llmRuntimeId: 'ollama', model: 'gemma4:e4b' });
+    const store = createSettingsStore(fakeStorage());
+    store.save({ llmRuntimeId: 'ollama', model: 'gemma4:e4b' });
+    expect(store.load()).toEqual({ llmRuntimeId: 'ollama', model: 'gemma4:e4b' });
   });
 
   it('壊れた JSON は既定値にフォールバックする', () => {
-    const s = fakeStorage();
-    s.setItem('settings', '{broken');
-    expect(loadSettings(s)).toEqual(DEFAULT_SETTINGS);
+    const storage = fakeStorage();
+    storage.setItem('settings', '{broken');
+    expect(createSettingsStore(storage).load()).toEqual(DEFAULT_SETTINGS);
   });
 });

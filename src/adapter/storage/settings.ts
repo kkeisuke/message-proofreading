@@ -4,7 +4,7 @@ const KEY = 'settings';
 
 type IStorage = Pick<Storage, 'getItem' | 'setItem'>;
 
-export function loadSettings(storage: IStorage): Settings {
+function loadSettings(storage: IStorage): Settings {
   const raw = storage.getItem(KEY);
   if (!raw) return DEFAULT_SETTINGS;
   try {
@@ -20,7 +20,7 @@ export function loadSettings(storage: IStorage): Settings {
   }
 }
 
-export function saveSettings(storage: IStorage, settings: Settings): void {
+function saveSettings(storage: IStorage, settings: Settings): void {
   storage.setItem(KEY, JSON.stringify(settings));
 }
 

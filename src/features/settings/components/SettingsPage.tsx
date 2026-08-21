@@ -1,4 +1,4 @@
-import { baseUrlOf, llmStartHintOf } from '../../../api/connection';
+import { getLLMRuntimeById } from '../../../api/connection';
 import { useModelList, type ListModelsFn } from '../hooks/useModelList';
 import { useSettings } from '../hooks/useSettings';
 import { LLMRuntimeSelector } from './LLMRuntimeSelector';
@@ -9,7 +9,8 @@ type Props = { listModels: ListModelsFn };
 
 export function SettingsPage({ listModels }: Props) {
   const { settings, saveSettings } = useSettings();
-  const modelList = useModelList(listModels, baseUrlOf(settings.llmRuntimeId));
+  const llmRuntime = getLLMRuntimeById(settings.llmRuntimeId);
+  const modelList = useModelList(listModels, llmRuntime.baseUrl);
 
   return (
     <main className="settings-page">
@@ -20,7 +21,7 @@ export function SettingsPage({ listModels }: Props) {
       <ModelSelector
         modelList={modelList}
         value={settings.model}
-        llmStartHint={llmStartHintOf(settings.llmRuntimeId)}
+        llmStartHint={llmRuntime.llmStartHint}
         onChange={(model) => saveSettings({ ...settings, model })}
       />
     </main>

@@ -28,8 +28,5 @@ export type Settings = {
 
 export const DEFAULT_SETTINGS: Settings = { llmRuntimeId: 'model-runner', model: null };
 
-export const baseUrlOf = (llmRuntimeId: LLMRuntimeId): string =>
-  LLM_RUNTIMES.find((runtime) => runtime.id === llmRuntimeId)!.baseUrl;
-
-export const llmStartHintOf = (llmRuntimeId: LLMRuntimeId): string =>
-  LLM_RUNTIMES.find((runtime) => runtime.id === llmRuntimeId)!.llmStartHint;
+export const getLLMRuntimeById = (llmRuntimeId: LLMRuntimeId) =>
+  LLM_RUNTIMES.find((runtime) => runtime.id === llmRuntimeId)!;

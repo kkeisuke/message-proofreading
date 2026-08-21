@@ -1,4 +1,4 @@
-import type { ChatMessage } from '../../api/chat';
+import type { ChatMessage, ChatStreamOptions } from '../../api/chat';
 import { LLMError } from '../../api/llmError';
 import { readChatChunk, splitServerSentEvents } from './chatStream';
 
@@ -45,7 +45,7 @@ export async function streamChat(
   fetchFn: IFetch,
   config: ChatConfig,
   messages: ChatMessage[],
-  opts: { signal?: AbortSignal; onChunk?: (acc: string) => void } = {},
+  opts: ChatStreamOptions = {},
 ): Promise<string> {
   const res = await fetchOrThrow(fetchFn, `${config.baseUrl}/chat/completions`, {
     method: 'POST',

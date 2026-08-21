@@ -34,24 +34,22 @@ export function useProofread(generate: GenerateFn | null) {
     setPhase('running');
     setProofreadText('');
     setError(null);
-    // ストリーミング中は生テキストを表示し、終了時に必ず整形済みへ差し替える。
-    let raw = '';
     try {
+      // ストリーミング中は生テキストを表示し、終了時に必ず整形済みへ差し替える。
       const result = await proofread(input, scene, generate, {
         signal: ac.signal,
         onChunk: (acc) => {
           // 中断直後に届いた先行 run のチャンクが後続 run の表示を上書きしないようにする。
           if (abortRef.current !== ac) return;
-          raw = acc;
           setProofreadText(acc);
         },
       });
-      if (abortRef.current === ac) setProofreadText(result.proofreadText);
+      if (abortRef.current === ac) setProofreadText(result);
     } catch (e) {
       if (abortRef.current !== ac) return;
       if (ac.signal.aborted) {
         // 中断はエラー扱いにしない。途中まで生成された分を整形して残す。
-        setProofreadText(cleanGeneratedText(raw));
+        setProofreadText(cleanGeneratedText);
       } else {
         setProofreadText('');
         setError(
