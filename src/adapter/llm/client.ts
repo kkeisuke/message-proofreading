@@ -155,7 +155,7 @@ export async function streamChat(
  * @returns モデル ID の配列。data が欠けた応答では空配列
  * @throws {LLMError} 接続不能なら `unreachable`、それ以外は HTTP ステータスに応じた種別
  */
-export async function listModels(fetchFn: IFetch, baseUrl: string): Promise<string[]> {
+export async function fetchModels(fetchFn: IFetch, baseUrl: string): Promise<string[]> {
   const res = await fetchOrThrow(fetchFn, `${baseUrl}/models`, { ...NO_REDIRECT });
   if (!res.ok) {
     throw httpErrorOf(res.status);

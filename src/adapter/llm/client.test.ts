@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { LLMError } from '../../api/llmError';
-import { listModels, streamChat, type FetchInit, type IFetch } from './client';
+import { fetchModels, streamChat, type FetchInit, type IFetch } from './client';
 
 const serverSentEventsResponse = (events: string[]): Response =>
   new Response(events.map((e) => `data: ${e}\n\n`).join(''), { status: 200 });
@@ -133,18 +133,18 @@ describe('streamChat', () => {
   });
 });
 
-describe('listModels', () => {
+describe('fetchModels', () => {
   it('モデル ID の一覧を返す', async () => {
     const fetchFn: IFetch = async () =>
       new Response(JSON.stringify({ data: [{ id: 'a' }, { id: 'b' }] }), { status: 200 });
-    expect(await listModels(fetchFn, 'http://x')).toEqual(['a', 'b']);
+    expect(await fetchModels(fetchFn, 'http://x')).toEqual(['a', 'b']);
   });
 
   it('URL を組み立て、リダイレクトを禁止する', async () => {
     const { calls, fetchFn } = recorder(
       () => new Response(JSON.stringify({ data: [] }), { status: 200 }),
     );
-    await listModels(fetchFn, 'http://localhost:11434/v1');
+    await fetchModels(fetchFn, 'http://localhost:11434/v1');
     expect(calls).toHaveLength(1);
     expect(calls[0].url).toBe('http://localhost:11434/v1/models');
     expect(calls[0].init?.maxRedirections).toBe(0);
@@ -154,7 +154,7 @@ describe('listModels', () => {
     const fetchFn: IFetch = async () => {
       throw new TypeError('Failed to fetch');
     };
-    const err = await listModels(fetchFn, 'http://x').catch((e: unknown) => e);
+    const err = await fetchModels(fetchFn, 'http://x').catch((e: unknown) => e);
     expect(err).toBeInstanceOf(LLMError);
     if (err instanceof LLMError) {
       expect(err.kind).toBe('unreachable');
@@ -163,7 +163,7 @@ describe('listModels', () => {
 
   it('HTTP 404 は model-not-found として種別を持つ', async () => {
     const fetchFn: IFetch = async () => new Response('ng', { status: 404 });
-    const err = await listModels(fetchFn, 'http://x').catch((e: unknown) => e);
+    const err = await fetchModels(fetchFn, 'http://x').catch((e: unknown) => e);
     expect(err).toBeInstanceOf(LLMError);
     if (err instanceof LLMError) {
       expect(err.kind).toBe('model-not-found');

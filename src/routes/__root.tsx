@@ -1,8 +1,8 @@
 import { fetch as tauriFetch } from '@tauri-apps/plugin-http';
 import { createRootRoute, Outlet } from '@tanstack/react-router';
 import { useEffect } from 'react';
-import { listModels } from '../adapter/llm/client';
-import { getLLMRuntimeById } from '../api/connection';
+import { fetchModels } from '../adapter/llm/client';
+import { getLLMRuntimeById } from '../api/llmRuntime';
 import { AppHeader } from '../components/AppHeader';
 import { useSettings } from '../features/settings';
 import { useConnection } from '../hooks/useConnection';
@@ -25,10 +25,14 @@ function RootLayout() {
     let active = true;
     const check = async () => {
       try {
-        await listModels(tauriFetch, baseUrl);
-        if (active) reportSuccess();
+        await fetchModels(tauriFetch, baseUrl);
+        if (active) {
+          reportSuccess();
+        }
       } catch (e) {
-        if (active) reportFailure(e);
+        if (active) {
+          reportFailure(e);
+        }
       }
     };
     void check();
