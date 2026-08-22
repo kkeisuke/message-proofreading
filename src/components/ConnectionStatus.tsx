@@ -1,8 +1,8 @@
-import { useConnection } from '../hooks/useConnection';
+import { useLLMRuntimeStatus } from '../hooks/useLLMRuntimeStatus';
 import './ConnectionStatus.css';
 
 export function ConnectionStatus() {
-  const { connected } = useConnection();
+  const { connected } = useLLMRuntimeStatus();
 
   if (connected === null) {
     return null;

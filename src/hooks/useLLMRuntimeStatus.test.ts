@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest';
 import { LLMError } from '../api/llmError';
-import { isLLMReachable } from './useConnection';
+import { isLLMReachable } from './useLLMRuntimeStatus';
 
 test('到達できなかった失敗は未接続と判定する', () => {
   expect(isLLMReachable(new LLMError('unreachable', '接続できませんでした'))).toBe(false);
