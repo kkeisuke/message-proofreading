@@ -1,4 +1,4 @@
-import type { Settings } from '../../../api/connection';
+import type { Settings } from '../../../api/settings';
 
 /** 保管の手段（localStorage 等）は adapter 側の関心で、feature はこの形だけを知る。 */
 export type SettingsStore = {

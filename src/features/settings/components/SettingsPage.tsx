@@ -1,23 +1,23 @@
-import { getLLMRuntimeById } from '../../../api/connection';
-import { useModelList, type ListModelsFn } from '../hooks/useModelList';
+import { getLLMRuntimeById, type LLMRuntimeId } from '../../../api/llmRuntime';
+import { useLLMRuntimeStatus } from '../../../hooks/useLLMRuntimeStatus';
 import { useSettings } from '../hooks/useSettings';
 import { LLMRuntimeSelector } from './LLMRuntimeSelector';
 import { ModelSelector } from './ModelSelector';
 import './SettingsPage.css';
 
-type Props = { listModels: ListModelsFn };
-
-export function SettingsPage({ listModels }: Props) {
+export function SettingsPage() {
   const { settings, saveSettings } = useSettings();
+  const { modelList, refresh } = useLLMRuntimeStatus();
   const llmRuntime = getLLMRuntimeById(settings.llmRuntimeId);
-  const modelList = useModelList(listModels, llmRuntime.baseUrl);
+
+  const selectLLMRuntime = (llmRuntimeId: LLMRuntimeId) => {
+    saveSettings({ llmRuntimeId, model: null });
+    refresh(getLLMRuntimeById(llmRuntimeId).baseUrl);
+  };
 
   return (
     <main className="settings-page">
-      <LLMRuntimeSelector
-        value={settings.llmRuntimeId}
-        onChange={(llmRuntimeId) => saveSettings({ llmRuntimeId, model: null })}
-      />
+      <LLMRuntimeSelector value={settings.llmRuntimeId} onChange={selectLLMRuntime} />
       <ModelSelector
         modelList={modelList}
         value={settings.model}

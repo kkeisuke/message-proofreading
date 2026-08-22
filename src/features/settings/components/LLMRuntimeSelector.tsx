@@ -1,4 +1,4 @@
-import { LLM_RUNTIMES, type LLMRuntimeId } from '../../../api/connection';
+import { LLM_RUNTIMES, type LLMRuntimeId } from '../../../api/llmRuntime';
 import './LLMRuntimeSelector.css';
 
 type Props = { value: LLMRuntimeId; onChange: (llmRuntimeId: LLMRuntimeId) => void };

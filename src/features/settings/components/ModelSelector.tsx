@@ -1,4 +1,4 @@
-import type { ModelList } from '../hooks/useModelList';
+import type { ModelList } from '../../../hooks/useLLMRuntimeStatus';
 import './ModelSelector.css';
 
 type Props = {

@@ -1,10 +1,10 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
-import type { Settings } from '../../../api/connection';
+import type { Settings } from '../../../api/settings';
 import type { SettingsStore } from '../domain/settingsStore';
 
 type SettingsValue = {
   settings: Settings;
-  saveSettings: (next: Settings) => void;
+  saveSettings: (nextSettings: Settings) => void;
 };
 
 const SettingsContext = createContext<SettingsValue | null>(null);
@@ -19,9 +19,9 @@ export function SettingsProvider({
 }) {
   const [settings, setSettings] = useState<Settings>(() => store.load());
   const saveSettings = useCallback(
-    (next: Settings) => {
-      store.save(next);
-      setSettings(next);
+    (nextSettings: Settings) => {
+      store.save(nextSettings);
+      setSettings(nextSettings);
     },
     [store],
   );
@@ -31,6 +31,8 @@ export function SettingsProvider({
 
 export function useSettings(): SettingsValue {
   const value = useContext(SettingsContext);
-  if (!value) throw new Error('SettingsProvider の外側で useSettings を呼び出しました');
+  if (!value) {
+    throw new Error('SettingsProvider の外側で useSettings を呼び出しました');
+  }
   return value;
 }
