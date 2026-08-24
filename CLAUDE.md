@@ -3,10 +3,6 @@
 ローカル LLM（Gemma 4 E4B）を使ったメッセージ校正デスクトップアプリ。
 業務メッセージを外部に送らずに校正することが目的。
 
-## 現在のフェーズ
-
-実装完了。動作確認・コードレビュー対応・可読性の整理まで終えている。
-
 ## 構成
 
 Tauri v2 + React + TypeScript。LLM は外部ランタイム（Docker Model Runner / Ollama）の OpenAI 互換 API に接続する。
@@ -15,15 +11,16 @@ Tauri v2 + React + TypeScript。LLM は外部ランタイム（Docker Model Runn
 - `src/adapter/` — 外部との接続実装。`llm/` と `storage/`
 - `src/features/` — 校正と設定。カプセル化され、adapter を知らない
 - `src/main.tsx` `src/routes/` — 合成の起点。ポートに adapter の実装を注入する
-- `src/components/` `src/hooks/` `src/styles/` — アプリ共通。Provider は `hooks/` に置く
+- `src/components/` `src/hooks/` `src/styles/` — アプリ共通。どの feature にも属さない Provider は `hooks/` に置く
 
 ## コマンド
 
 ```
-pnpm tauri dev    アプリを起動
+pnpm tauri dev    開発用にアプリを起動
+pnpm tauri build  配布用の .app と DMG を作る
 pnpm lint         oxlint（型情報あり）
 pnpm test         Vitest
-pnpm build        型チェック + ビルド
+pnpm build        型チェック + フロントエンドのビルド
 ```
 
 pnpm は mise 管理。コミット前に lint / format:check / test / build を通すこと。

@@ -45,22 +45,26 @@ docker model pull ai/gemma4:e4b-q4_K_M
 ollama serve
 ```
 
-### 3. アプリを起動する
+## ビルドとインストール
 
 ```
-pnpm tauri dev
+pnpm tauri build
 ```
 
-初回は設定画面で接続先とモデルを選ぶ。選んだ内容は次回以降も保持される。
+`src-tauri/target/release/bundle/` に `.app` と DMG が出力される[^1]。
+
+DMG を開き、`message-proofreading.app` を `/Applications` にドラッグする。
+
+初回起動時に設定画面で接続先とモデルを選ぶ。選んだ内容は次回以降も保持される。
 
 ## 開発
 
 ```
-pnpm tauri dev    アプリを起動
+pnpm tauri dev    開発用にアプリを起動
 pnpm lint         oxlint（型情報あり）
 pnpm format       oxfmt
 pnpm test         Vitest
-pnpm build        型チェック + ビルド
+pnpm build        型チェック + フロントエンドのビルド
 ```
 
 コミット前に `lint` / `format:check` / `test` / `build` を通す。
@@ -69,3 +73,5 @@ pnpm build        型チェック + ビルド
 
 - [docs/requirements.md](docs/requirements.md) — 要求分析・要件定義
 - [docs/design.md](docs/design.md) — 設計書
+
+[^1]: 配布用の署名はしていないため、DMG を他の Mac に渡すと Gatekeeper に止められる。使う Mac でビルドする。

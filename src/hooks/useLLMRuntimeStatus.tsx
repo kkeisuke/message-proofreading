@@ -85,7 +85,7 @@ export function LLMRuntimeStatusProvider({
     [fetchModels],
   );
 
-  // 起動時に 1 回だけ確かめる（design.md §4）。refresh と initialBaseUrl はどちらも安定した参照。
+  // 起動時に 1 回だけ確かめる（design.md §6）。refresh と initialBaseUrl はどちらも安定した参照。
   useEffect(() => {
     refresh(initialBaseUrl);
   }, [refresh, initialBaseUrl]);
