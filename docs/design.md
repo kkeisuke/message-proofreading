@@ -37,7 +37,7 @@ flowchart TB
 | シェル | Tauri v2 | 学習対象。軽量で macOS ネイティブ WebView を使う |
 | HTTP | tauri-plugin-http | CORS 制約の解消。ストリーミング対応 |
 | UI | React | 学習対象 |
-| ルーティング | TanStack Router v1 | 学習対象。型安全なルートとローダー |
+| ルーティング | TanStack Router v1 | 学習対象。型安全なルート定義[^9] |
 | ビルド | Vite | Tauri + React の標準構成 |
 | 言語 | TypeScript | ドメインロジックの型安全 |
 | テスト | Vitest | ドメインロジックの単体テスト |
@@ -72,6 +72,8 @@ WKWebView での対応状況は実装時に個別確認する。
   - `/` — 校正画面
   - `/settings` — 設定画面
 
+接続状態とモデル一覧は同じ通信から分かるため、1つの状態としてルートで持つ。
+
 ### 4.1 校正画面 `/`
 
 上から順に次の要素を縦に並べる。
@@ -88,7 +90,8 @@ WKWebView での対応状況は実装時に個別確認する。
 ### 4.2 設定画面 `/settings`
 
 - 接続先: Docker Model Runner / Ollama のプリセットから選択
-- モデル: ルートのローダーで `/v1/models` から一覧を取得して選択
+- モデル: `/v1/models` から取得した一覧から選択
+  - 接続先を切り替えると取得し直す
 - 保存で localStorage へ書き込む
 
 ### 4.3 シーン定義
@@ -110,19 +113,20 @@ src/
 ├─ features/              カプセル化。公開は index.ts のみ。feature 同士は参照しない
 │  ├─ proofread/
 │  │  ├─ components/      コンポーネント単位で .tsx + .css を1組に
-│  │  ├─ domain/          純粋ロジック（prompts / cleanup / proofread）。ポートを定義
-│  │  ├─ hooks/           feature 固有 hooks（useProofread: 生成状態・中断の管理）
+│  │  ├─ domain/          純粋ロジック（prompts / cleanGeneratedText）
+│  │  ├─ hooks/           画面の状態と操作。ポートを定義
 │  │  └─ index.ts
 │  └─ settings/
 │     ├─ components/
+│     ├─ domain/          設定の保管庫のポート
 │     ├─ hooks/
 │     └─ index.ts
 ├─ adapter/               外部世界との接続実装
 │  ├─ llm/                OpenAI 互換 API（生成 / モデル一覧）。tauri-plugin-http を使う唯一の場所
 │  └─ storage/            設定永続化（localStorage）
-├─ api/                   LLM API との契約（接続先プリセット・メッセージ形式・エラー種別）
+├─ api/                   LLM API との契約（接続先・メッセージ形式・エラー種別・設定の型）
 ├─ components/            アプリ共通 UI。同じく .tsx + .css を1組に
-├─ hooks/                 アプリ共通 hooks。必要になるまで作らない
+├─ hooks/                 アプリ共通 hooks。Context と Provider もここに置く
 └─ styles/                @layer の順序定義とデザイントークンのみ
 src-tauri/                Tauri シェル（規約による固定名）
 ```
@@ -137,21 +141,24 @@ adapter → api
 - `api/` は LLM API との契約を定義するだけで、通信そのものは持たない
   - 契約を使って実際に通信するのが `adapter/llm/`
   - `features/*/domain/` は校正そのもののドメインで、`api/` とは別物
-- feature の `domain/` が定義したポート（例: `GenerateFn`）に、routes 層が `adapter/llm` の実装を注入する
+- feature が定義したポート（例: `StreamTextFn`）に、合成の起点が `adapter` の実装を注入する
   - adapter は features を知らず、features は adapter の実装を知らない
-  - ドメインロジックは fetch や Tauri に依存しない純粋 TypeScript になり、モック注入でテストできる
+  - ドメインロジックは fetch や Tauri に依存しない純粋 TypeScript になり、単体でテストできる
+- 合成の起点は `main.tsx` と `routes/`
+  - `main.tsx` が Provider を組み立て、アプリ全体で使う adapter を注入する
+  - `routes/` は画面ごとの adapter を注入する
 - CSS は各コンポーネントに同名の `.css` を隣接させ、ルートクラス名でスコープする
   - `styles/` には `@layer` の順序（reset → tokens → components）とデザイントークンだけを置く
 
 ## 6. 校正ドメインの設計
 
-`features/proofread/domain/` の構成。
+`features/proofread/` の構成。
 
 | モジュール | 責務 |
 |---|---|
-| `prompts.ts` | シーン別システムプロンプト・few-shot 例・実行時指示の組立 |
-| `cleanup.ts` | 生成結果の整形。思考タグ・区切り線・引用符の除去 |
-| `proofread.ts` | 統合。プロンプト組立 → 生成 → 整形 |
+| `domain/prompts.ts` | シーン別システムプロンプト・few-shot 例・実行時指示の組立 |
+| `domain/cleanGeneratedText.ts` | 生成結果の整形。思考タグ・区切り線・引用符の除去 |
+| `hooks/useProofreadPage.ts` | 統合。プロンプト組立 → 生成 → 整形と、画面の状態・中断 |
 
 ### 6.1 プロンプト設計の原則
 
@@ -178,23 +185,21 @@ adapter → api
 sequenceDiagram
     actor user as 利用者
     participant ui as UI（React）
-    participant dom as proofread（domain）
     participant llm as LLM アダプタ
     participant rust as Tauri 本体（Rust）
     participant rt as 外部ランタイム
 
     user->>ui: 「校正する」
-    ui->>dom: proofread(入力, シーン, generate, signal)
-    dom->>llm: generate(メッセージ列, signal)
+    ui->>ui: プロンプト組立
+    ui->>llm: 生成（メッセージ列, signal）
     llm->>rust: IPC: リクエスト送信
     rust->>rt: HTTP POST /chat/completions
     rt-->>rust: SSE チャンク（逐次）
     rust-->>llm: Channel でチャンク転送（逐次）
     llm-->>ui: onChunk（逐次表示）
-    llm-->>dom: 全文
-    dom->>dom: 整形
-    dom-->>ui: 校正案
-    ui-->>user: 表示
+    llm-->>ui: 全文
+    ui->>ui: 整形
+    ui-->>user: 校正案を表示
 ```
 
 Tauri 側の処理は次のとおり。
@@ -211,8 +216,8 @@ Tauri 側の処理は次のとおり。
 | 状況 | 挙動 |
 |---|---|
 | 接続先に到達できない（校正時） | 校正案エリアに状態と対処方法を表示し、設定画面へ誘導 |
-| 接続先に到達できない（設定画面） | ローダーがエラーを返し、ランタイムの起動方法を案内 |
-| 生成の中断 | AbortController で中断。エラー扱いにしない |
+| 接続先に到達できない（設定画面） | モデル欄にランタイムの起動方法を案内 |
+| 生成の中断 | AbortController で中断。エラー扱いにせず、接続状態も変えない[^10] |
 | モデル未選択 | 校正ボタンを無効化し、設定画面へ誘導 |
 
 ## 8. テスト
@@ -220,10 +225,10 @@ Tauri 側の処理は次のとおり。
 - 実装の最初に、使い捨ての最小実装（スパイク）で通信経路を検証し、SSE の逐次受信と `AbortSignal` での中断を確認する[^7]
 - 単体テスト（Vitest）はドメインと adapter の純粋部分が対象
   - `prompts.ts`: system + few-shot 対 + 実入力の並びと、フレームの形を検証
-  - `cleanup.ts`: 思考タグ・区切り線・引用符の除去を検証
+  - `cleanGeneratedText.ts`: 思考タグ・区切り線・引用符の除去を検証
   - SSE 分割の TransformStream: チャンク境界がイベント途中で切れるケースを含めて検証
-  - `proofread.ts`: 生成関数をモックし、組み立てたメッセージ列と整形結果を検証
-  - `useConnection.ts`: 接続状態の報告・通知・購読解除を検証
+  - `client.ts`: 送信内容・エラー種別・リダイレクト禁止を、fetch をモックして検証
+  - 接続状態の判定: 到達できたうえでの失敗を接続できている証拠として扱うことを検証
 - 実モデルでの品質確認は手動で行う
   - シーン別プロンプトの調整は、実装フェーズで実測しながら行う
 
@@ -241,3 +246,7 @@ Tauri 側の処理は次のとおり。
 [^7]: 事前検証はブラウザの `fetch` でランタイムに直結しており、tauri-plugin-http 経由（IPC → Rust → Channel）の逐次受信と中断は未実測。成り立たない場合はストリーミング表示と中断の設計を見直すため、作り込みの前に確かめる。
 
 [^8]: oxfmt は beta（pre-1.0）だが、Prettier の JS/TS 準拠テストに 100% 合格しており、大規模 OSS での採用実績もある。安定版が出たら追従する。
+
+[^9]: ローダーは使わない。ローダーは React の外で走るため、Context に置いた設定を読めない。設定を読めるようにするには localStorage を直接読むことになり、設定の持ち主が state とストレージの2系統に割れる。
+
+[^10]: 中断された通信を「接続できない」と扱わないよう、adapter は中断時の例外に種別を付けずそのまま伝える。
