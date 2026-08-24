@@ -3,4 +3,8 @@ node_modules/
 dist/
 src-tauri/target/
 tsconfig.tsbuildinfo
-docs/superpowers/plans/
+
+# docs は要求分析と設計書だけをコミットする
+docs/*
+!docs/design.md
+!docs/requirements.md
