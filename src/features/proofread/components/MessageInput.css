@@ -1,9 +1,28 @@
 @layer components {
   .message-input {
-    font: inherit;
-    padding: var(--space-1);
-    border: 1px solid var(--color-border);
+    /* 入力行数に高さを追従させる。上限を超えたら中でスクロールする。 */
+    field-sizing: content;
+    min-height: 6lh;
+    max-height: 18lh;
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-strong);
     border-radius: var(--radius);
-    resize: vertical;
+    resize: none;
+
+    &::placeholder {
+      color: var(--color-text-placeholder);
+    }
+
+    &:focus-visible {
+      border-color: var(--color-accent);
+    }
+  }
+
+  /* 追従が使えない環境では、手で高さを変えられるようにしておく。 */
+  @supports not (field-sizing: content) {
+    .message-input {
+      resize: vertical;
+    }
   }
 }

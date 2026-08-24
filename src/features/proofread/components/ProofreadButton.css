@@ -1,0 +1,26 @@
+@layer components {
+  .proofread-button {
+    justify-self: start;
+    min-height: var(--control-height);
+    padding-inline: var(--space-6);
+    background: var(--color-accent);
+    color: var(--color-surface);
+    border: 1px solid transparent;
+    border-radius: var(--radius);
+    font-weight: 600;
+    cursor: pointer;
+
+    /* 押している間の手応え。要素を動かすと離す位置がボタンの外に落ちるため、色で示す。 */
+    &:hover:not(:disabled),
+    &:active:not(:disabled) {
+      background: var(--color-accent-hover);
+    }
+
+    &:disabled {
+      background: var(--color-bg);
+      color: var(--color-text-muted);
+      border-color: var(--color-border);
+      cursor: not-allowed;
+    }
+  }
+}

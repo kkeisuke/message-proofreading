@@ -1,9 +1,9 @@
 @layer components {
   .proofread-page {
     display: grid;
-    gap: var(--space-2);
-    padding: var(--space-2);
-    max-width: 40rem;
+    gap: var(--space-5);
+    padding: var(--space-6) var(--space-5);
+    max-width: var(--page-width);
     margin-inline: auto;
   }
 }

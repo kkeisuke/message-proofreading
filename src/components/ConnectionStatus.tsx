@@ -1,7 +1,9 @@
 import { useLLMRuntimeStatus } from '../hooks/useLLMRuntimeStatus';
 import './ConnectionStatus.css';
 
-export function ConnectionStatus() {
+type Props = { llmRuntimeLabel: string };
+
+export function ConnectionStatus({ llmRuntimeLabel }: Props) {
   const { connected } = useLLMRuntimeStatus();
 
   if (connected === null) {
@@ -9,7 +11,7 @@ export function ConnectionStatus() {
   }
   return (
     <span className="connection-status" data-status={connected ? 'connected' : 'disconnected'}>
-      {connected ? '接続中' : '未接続'}
+      {llmRuntimeLabel} {connected ? '接続済み' : '未接続'}
     </span>
   );
 }

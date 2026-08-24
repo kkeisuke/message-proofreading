@@ -1,20 +1,32 @@
 @layer components {
   .proofread-error-view {
-    container-type: inline-size;
+    background: var(--color-surface);
     border: 1px solid var(--color-border);
+    border-inline-start: 3px solid var(--color-warn); /* 校正結果と一目で区別する */
     border-radius: var(--radius);
-    padding: var(--space-2);
-    min-height: 6lh;
+    padding: var(--space-4);
+    min-height: 8lh;
     display: grid;
     align-content: start;
-    gap: var(--space-1);
+    gap: var(--space-2);
 
     & .proofread-error-view-state {
       color: var(--color-warn);
+      font-weight: 600;
+    }
+
+    & summary {
+      color: var(--color-text-muted);
+      font-size: 0.875rem;
+      cursor: pointer;
     }
 
     & pre {
-      margin-block-start: var(--space-1);
+      margin-block-start: var(--space-2);
+      padding: var(--space-3);
+      background: var(--color-bg);
+      border-radius: var(--radius-sm);
+      font-size: 0.8125rem;
       white-space: pre-wrap;
       word-break: break-all;
     }

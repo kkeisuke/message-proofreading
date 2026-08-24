@@ -1,3 +1,6 @@
+// @layer の順序は最初に現れた宣言で決まる。他の import が先にコンポーネントの
+// CSS を引き込むと components が先頭になり、reset に負けるため、必ず先頭で読む。
+import './styles/global.css';
 import { fetch as tauriFetch } from '@tauri-apps/plugin-http';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { StrictMode } from 'react';
@@ -8,7 +11,6 @@ import { getLLMRuntimeById } from './api/llmRuntime';
 import { SettingsProvider } from './features/settings';
 import { LLMRuntimeStatusProvider } from './hooks/useLLMRuntimeStatus';
 import { routeTree } from './routeTree.gen';
-import './styles/global.css';
 
 const router = createRouter({ routeTree });
 const settingsStore = createSettingsStore(localStorage);

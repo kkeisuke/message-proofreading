@@ -1,20 +1,32 @@
 @layer components {
   .usage-scene-selector {
+    /* grid 項目は既定で引き伸ばされるため、中身ぶんの幅に留める。 */
+    justify-self: start;
     display: inline-flex;
-    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-strong);
     border-radius: var(--radius);
     overflow: hidden;
 
     & label {
       display: inline-flex;
       align-items: center;
-      padding: var(--space-1) var(--space-2);
+      justify-content: center;
+      min-height: var(--control-height);
+      min-width: 7rem;
+      padding-inline: var(--space-4);
+      color: var(--color-text-muted);
       cursor: pointer;
 
       /* 選択中の見た目。input は視覚的に隠すため :has() で label 側に反映する。 */
       &:has(input:checked) {
         background: var(--color-accent);
-        color: white;
+        color: var(--color-surface);
+      }
+
+      &:hover:not(:has(input:checked)) {
+        background: var(--color-bg);
+        color: var(--color-text);
       }
 
       /* フォーカスリング。currentColor で選択中（白文字）でも視認できる。
@@ -23,6 +35,10 @@
         outline: 2px solid currentColor;
         outline-offset: -3px;
       }
+    }
+
+    & label + label {
+      border-inline-start: 1px solid var(--color-border);
     }
 
     /* display: none はフォーカスを受け取れなくなるため使わない。

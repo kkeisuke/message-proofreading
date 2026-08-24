@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { getButtonActivationProps } from '../../../components/buttonActivation';
 import './CopyButton.css';
 
 type Props = { text: string; disabled: boolean };
@@ -56,7 +57,12 @@ export function CopyButton({ text, disabled }: Props) {
 
   return (
     <>
-      <button type="button" className="copy-button" disabled={disabled} onClick={copy}>
+      <button
+        type="button"
+        className="copy-button"
+        disabled={disabled}
+        {...getButtonActivationProps(copy)}
+      >
         コピー
       </button>
       <div ref={toastRef} className="copy-toast" data-status={status ?? ''} popover="manual">

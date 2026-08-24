@@ -8,11 +8,29 @@
     box-sizing: border-box;
   }
   body {
-    font-family: system-ui, sans-serif;
+    min-height: 100dvh;
+    font-family:
+      system-ui,
+      -apple-system,
+      'Hiragino Sans',
+      sans-serif;
+    line-height: 1.75;
     background: var(--color-bg);
     color: var(--color-text);
   }
-  button {
+  button,
+  input,
+  select,
+  textarea {
     font: inherit;
+    color: inherit;
+  }
+  a {
+    color: var(--color-accent);
+    text-underline-offset: 0.2em;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
   }
 }

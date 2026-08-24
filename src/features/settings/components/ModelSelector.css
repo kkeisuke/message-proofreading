@@ -1,13 +1,55 @@
 @layer components {
   .model-selector {
+    background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
-    padding: var(--space-2);
+    padding: var(--space-4) var(--space-5) var(--space-5);
     display: grid;
-    gap: var(--space-1);
+    gap: var(--space-2);
+
+    & legend {
+      padding-inline: var(--space-2);
+      font-weight: 600;
+    }
 
     & .model-selector-error {
       color: var(--color-warn);
+    }
+
+    /* 標準の描画では高さも余白も指定が効かないため、自前で描く。
+       矢印は CSP で data: URI を読めないので linear-gradient で作る。 */
+    & select {
+      /* 三角の左半分と右半分を並べて描く。両者が隣り合うよう、
+         位置の差と一辺の長さを同じ値にする。 */
+      --arrow-side: 0.45rem;
+
+      appearance: none;
+      justify-self: start;
+      max-width: 100%;
+      min-height: var(--control-height);
+      padding-inline: var(--space-4) var(--space-6);
+      background-color: var(--color-surface);
+      background-image:
+        linear-gradient(45deg, transparent 50%, currentColor 50%),
+        linear-gradient(135deg, currentColor 50%, transparent 50%);
+      background-position:
+        right calc(var(--space-4) + var(--arrow-side)) center,
+        right var(--space-4) center;
+      background-size: var(--arrow-side) var(--arrow-side);
+      background-repeat: no-repeat;
+      border: 1px solid var(--color-border-strong);
+      border-radius: var(--radius);
+      cursor: pointer;
+
+      &:hover:not(:disabled) {
+        background-color: var(--color-bg);
+      }
+
+      &:disabled {
+        color: var(--color-text-muted);
+        border-color: var(--color-border);
+        cursor: not-allowed;
+      }
     }
   }
 }

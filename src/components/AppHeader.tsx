@@ -2,12 +2,19 @@ import { Link } from '@tanstack/react-router';
 import { ConnectionStatus } from './ConnectionStatus';
 import './AppHeader.css';
 
-export function AppHeader() {
+type Props = { llmRuntimeLabel: string };
+
+export function AppHeader({ llmRuntimeLabel }: Props) {
   return (
     <header className="app-header">
-      <Link to="/">メッセージ校正</Link>
-      <Link to="/settings">設定</Link>
-      <ConnectionStatus />
+      <nav className="app-header-nav">
+        {/* exact を付けないと、設定画面にいる間も「校正」が現在地になる。 */}
+        <Link to="/" activeOptions={{ exact: true }}>
+          校正
+        </Link>
+        <Link to="/settings">設定</Link>
+      </nav>
+      <ConnectionStatus llmRuntimeLabel={llmRuntimeLabel} />
     </header>
   );
 }

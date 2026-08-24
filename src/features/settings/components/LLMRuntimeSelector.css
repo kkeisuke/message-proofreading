@@ -1,9 +1,38 @@
 @layer components {
   .llm-runtime-selector {
+    background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
-    padding: var(--space-2);
+    padding: var(--space-4) var(--space-5) var(--space-5);
     display: grid;
     gap: var(--space-1);
+
+    & legend {
+      padding-inline: var(--space-2);
+      font-weight: 600;
+    }
+
+    /* ラジオと文字のベースラインがずれるため、行として揃える。 */
+    & label {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      min-height: var(--control-height);
+      padding-inline: var(--space-2);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+
+      &:hover {
+        background: var(--color-bg);
+      }
+    }
+
+    & input[type='radio'] {
+      flex: none;
+      inline-size: 1.125rem;
+      block-size: 1.125rem;
+      margin: 0;
+      accent-color: var(--color-accent);
+    }
   }
 }

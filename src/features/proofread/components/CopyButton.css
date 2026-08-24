@@ -1,16 +1,41 @@
 @layer components {
   .copy-button {
     anchor-name: --copy-button;
+    justify-self: start;
+    min-height: var(--control-height);
+    padding-inline: var(--space-5);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius);
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      background: var(--color-bg);
+    }
+
+    /* 押している間の手応え。要素を動かすと離す位置がボタンの外に落ちるため、色で示す。 */
+    &:active:not(:disabled) {
+      background: var(--color-border);
+    }
+
+    &:disabled {
+      background: var(--color-bg);
+      color: var(--color-text-muted);
+      border-color: var(--color-border);
+      cursor: not-allowed;
+    }
   }
 
   .copy-toast {
     position-anchor: --copy-button;
     position-area: top;
-    margin-bottom: var(--space-1);
+    margin-bottom: var(--space-2);
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
-    padding: var(--space-1) var(--space-2);
-    background: var(--color-bg);
+    padding: var(--space-2) var(--space-4);
+    background: var(--color-surface);
+    box-shadow: var(--shadow);
+    font-size: 0.875rem;
 
     &[data-status='failed'] {
       color: var(--color-warn);
