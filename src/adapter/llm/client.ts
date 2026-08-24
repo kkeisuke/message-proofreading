@@ -30,12 +30,17 @@ const NO_REDIRECT = { maxRedirections: 0 } as const;
  * @param url リクエスト先。scope 検査を受ける最初の URL でもある
  * @param init リクエストの内容。`NO_REDIRECT` を含めて渡すこと
  * @returns 到達できたときのレスポンス。成否は呼び出し側が `res.ok` で判定する
- * @throws {LLMError} kind は `unreachable`
+ * @throws {LLMError} 到達できなかったときは kind `unreachable`
+ * @throws 中断されたときは fetch が投げた例外をそのまま
  */
 async function fetchOrThrow(fetchFn: IFetch, url: string, init: FetchInit): Promise<Response> {
   try {
     return await fetchFn(url, init);
   } catch (e) {
+    // 利用者が中断した場合は到達できなかったわけではないため、種別を付けずにそのまま伝える。
+    if (init.signal?.aborted) {
+      throw e;
+    }
     throw new LLMError('unreachable', `${url} に接続できませんでした: ${causeMessage(e)}`);
   }
 }

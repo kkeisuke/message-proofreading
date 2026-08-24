@@ -6,16 +6,16 @@ const USAGE_SCENES: { id: UsageScene; label: string }[] = [
   { id: 'casual', label: 'カジュアル' },
 ];
 
-type Props = { value: UsageScene; onChange: (scene: UsageScene) => void };
+type Props = { value: UsageScene; onChange: (usageScene: UsageScene) => void };
 
 export function UsageSceneSelector({ value, onChange }: Props) {
   return (
-    <div className="usage-scene-selector" role="radiogroup" aria-label="シーン">
+    <div className="usage-scene-selector" role="radiogroup" aria-label="利用シーン">
       {USAGE_SCENES.map((s) => (
         <label key={s.id}>
           <input
             type="radio"
-            name="scene"
+            name="usage-scene"
             value={s.id}
             checked={value === s.id}
             onChange={() => onChange(s.id)}

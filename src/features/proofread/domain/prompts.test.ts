@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { buildMessages } from './prompts';
+import { buildPrompt } from './prompts';
 
-describe('buildMessages', () => {
+describe('buildPrompt', () => {
   it('system + few-shot 対 + 実入力の並びになる', () => {
-    const messages = buildMessages('テスト入力', 'business');
+    const messages = buildPrompt('テスト入力', 'business');
     expect(messages[0].role).toBe('system');
     const rest = messages.slice(1);
     expect(rest.length % 2).toBe(1);
@@ -15,13 +15,11 @@ describe('buildMessages', () => {
   });
 
   it('実入力は区切り線のフレームで包まれる', () => {
-    const last = buildMessages('テスト入力', 'business').at(-1)!;
+    const last = buildPrompt('テスト入力', 'business').at(-1)!;
     expect(last.content).toContain('---\nテスト入力\n---');
   });
 
-  it('シーンで system プロンプトが変わる', () => {
-    expect(buildMessages('x', 'business')[0].content).not.toBe(
-      buildMessages('x', 'casual')[0].content,
-    );
+  it('利用シーンで system プロンプトが変わる', () => {
+    expect(buildPrompt('x', 'business')[0].content).not.toBe(buildPrompt('x', 'casual')[0].content);
   });
 });

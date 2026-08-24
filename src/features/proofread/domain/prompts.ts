@@ -56,10 +56,10 @@ const framePrompt = (text: string): string =>
   text +
   '\n---';
 
-export function buildMessages(text: string, scene: UsageScene): ChatMessage[] {
+export function buildPrompt(text: string, usageScene: UsageScene): ChatMessage[] {
   return [
-    { role: 'system', content: SYSTEM_PROMPTS[scene] },
-    ...EXAMPLES[scene].flatMap(({ user, assistant }): ChatMessage[] => [
+    { role: 'system', content: SYSTEM_PROMPTS[usageScene] },
+    ...EXAMPLES[usageScene].flatMap(({ user, assistant }): ChatMessage[] => [
       { role: 'user', content: framePrompt(user) },
       { role: 'assistant', content: assistant },
     ]),

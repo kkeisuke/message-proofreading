@@ -17,18 +17,26 @@ export function CopyButton({ text, disabled }: Props) {
 
   useEffect(() => {
     return () => {
-      if (timeoutRef.current !== null) clearTimeout(timeoutRef.current);
+      if (timeoutRef.current !== null) {
+        clearTimeout(timeoutRef.current);
+      }
     };
   }, []);
 
-  const notify = (next: Status) => {
-    setStatus(next);
+  const notify = (nextStatus: Status) => {
+    setStatus(nextStatus);
     const toast = toastRef.current;
-    if (toast && !toast.matches(':popover-open')) toast.showPopover();
-    if (timeoutRef.current !== null) clearTimeout(timeoutRef.current);
+    if (toast && !toast.matches(':popover-open')) {
+      toast.showPopover();
+    }
+    if (timeoutRef.current !== null) {
+      clearTimeout(timeoutRef.current);
+    }
     timeoutRef.current = setTimeout(() => {
       const current = toastRef.current;
-      if (current?.matches(':popover-open')) current.hidePopover();
+      if (current?.matches(':popover-open')) {
+        current.hidePopover();
+      }
     }, 1500);
   };
 

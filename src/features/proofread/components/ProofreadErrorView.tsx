@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router';
-import type { ProofreadError } from '../hooks/useProofread';
+import type { ProofreadError } from '../hooks/useProofreadPage';
 import './ProofreadErrorView.css';
 
 type Props = { error: ProofreadError; llmStartHint: string };

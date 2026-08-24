@@ -8,10 +8,13 @@ const wrapsWhole = (text: string, open: string, close: string): boolean => {
   let depth = 0;
   for (let i = 0; i < text.length; i++) {
     const char = text[i];
-    if (char === open) depth++;
-    else if (char === close) {
+    if (char === open) {
+      depth++;
+    } else if (char === close) {
       depth--;
-      if (depth === 0) return i === text.length - 1;
+      if (depth === 0) {
+        return i === text.length - 1;
+      }
     }
   }
   return false;
@@ -20,7 +23,9 @@ const wrapsWhole = (text: string, open: string, close: string): boolean => {
 /** 全体が対応する引用符で囲まれている場合だけ剥がす。片側だけの一致では剥がさない。 */
 const unquote = (text: string): string => {
   for (const [open, close] of BRACKETS) {
-    if (text.startsWith(open) && wrapsWhole(text, open, close)) return text.slice(1, -1);
+    if (text.startsWith(open) && wrapsWhole(text, open, close)) {
+      return text.slice(1, -1);
+    }
   }
   if (
     text.length >= 2 &&

@@ -1,5 +1,4 @@
-import type { GenerateFn } from '../domain/proofread';
-import { useProofreadPage } from '../hooks/useProofreadPage';
+import { useProofreadPage, type StreamTextFn } from '../hooks/useProofreadPage';
 import { CopyButton } from './CopyButton';
 import { MessageInput } from './MessageInput';
 import { ModelNotSelectedView } from './ModelNotSelectedView';
@@ -9,20 +8,27 @@ import { ProofreadTextView } from './ProofreadTextView';
 import { UsageSceneSelector } from './UsageSceneSelector';
 import './ProofreadPage.css';
 
-type Props = { generate: GenerateFn | null; llmStartHint: string };
+type Props = {
+  streamText: StreamTextFn;
+  baseUrl: string;
+  model: string | null;
+  llmStartHint: string;
+};
 
-export function ProofreadPage({ generate, llmStartHint }: Props) {
-  const page = useProofreadPage(generate);
+export function ProofreadPage({ streamText, baseUrl, model, llmStartHint }: Props) {
+  const page = useProofreadPage(streamText, baseUrl, model);
 
-  if (!page.isModelSelected) return <ModelNotSelectedView />;
+  if (!page.isModelSelected) {
+    return <ModelNotSelectedView />;
+  }
 
-  const running = page.phase === 'running';
+  const running = page.status === 'running';
   return (
     <main className="proofread-page">
-      <UsageSceneSelector value={page.scene} onChange={page.setUsageScene} />
+      <UsageSceneSelector value={page.usageScene} onChange={page.setUsageScene} />
       <MessageInput value={page.input} onChange={page.setInput} />
       <ProofreadButton
-        phase={page.phase}
+        status={page.status}
         canRun={page.canRun}
         onRun={page.run}
         onCancel={page.cancel}

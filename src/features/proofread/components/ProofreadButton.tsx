@@ -1,14 +1,14 @@
-import type { ProofreadPhase } from '../hooks/useProofread';
+import type { ProofreadStatus } from '../hooks/useProofreadPage';
 
 type Props = {
-  phase: ProofreadPhase;
+  status: ProofreadStatus;
   canRun: boolean;
   onRun: () => void;
   onCancel: () => void;
 };
 
-export function ProofreadButton({ phase, canRun, onRun, onCancel }: Props) {
-  if (phase === 'running') {
+export function ProofreadButton({ status, canRun, onRun, onCancel }: Props) {
+  if (status === 'running') {
     return (
       <button type="button" onClick={onCancel}>
         中断
