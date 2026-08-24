@@ -1,4 +1,9 @@
-/** 接続先の候補。ここにない URL へは接続しない。 */
+/**
+ * 接続先の候補。ここにない URL へは接続しない。
+ *
+ * baseUrl は `capabilities/default.json` の http scope と対応する。
+ * 増減するときは両方を直すこと。scope 側に載せ忘れると実行時に弾かれる。
+ */
 export const LLM_RUNTIMES = [
   {
     id: 'model-runner',
