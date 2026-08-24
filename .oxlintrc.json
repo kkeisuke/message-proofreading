@@ -1,32 +1,22 @@
 {
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "$schema": "./node_modules/oxlint/configuration_schema.json", // エディタでの補完と設定値の検証に使う
   "categories": {
-    "correctness": "error",
-    "suspicious": "warn"
+    "correctness": "error", // 明らかな誤りは失敗させる
+    "suspicious": "warn" // 疑わしい書き方は気付けるように警告に留める
   },
   "ignorePatterns": [
-    "src/routeTree.gen.ts"
+    "src/routeTree.gen.ts" // TanStack Router の生成物。手で書かないため検査しない
   ],
   "plugins": [
-    "react",
-    "jsx-a11y",
-    "promise",
-    "typescript"
+    "react", // hook の順序など React 固有の誤りを見る
+    "jsx-a11y", // 支援技術から操作できない UI を見つける
+    "promise", // 握り潰された Promise を見つける
+    "typescript" // 型情報を使う検査を有効にする
   ],
   "rules": {
-    // if / else / for / while の本体は 1 文でも必ず {} で囲む。
-    // 行を足したときに囲み忘れて条件の外に出る事故を防ぐ。
-    "curly": ["error", "all"],
-    "react/rules-of-hooks": "error",
-    // React 19 + automatic JSX ランタイム（tsconfig.json の jsx: "react-jsx",
-    // @vitejs/plugin-react）を使用しており、JSX 変換に `React` の import は不要。
-    // このルールはクラシックランタイム前提で automatic ランタイムを認識しないため、
-    // 全 JSX ファイルで誤検知する。個別に無効化する。
-    "react/react-in-jsx-scope": "off",
-    // JSON.parse / Response.json() の戻り値は any/unknown であり、adapter 層の境界
-    // （settings.ts, chatStream.ts, client.ts）ではその形状をアサーションしてから typeof 等の
-    // ランタイム検査で確定させている。スキーマ検証ライブラリ（zod 等）は本プロジェクトでは
-    // 未導入方針のため、このアサーションは避けられない意図的なパターン。個別に無効化する。
-    "typescript/no-unsafe-type-assertion": "off"
+    "curly": ["error", "all"], // 1 文でも {} で囲ませる。行を足したときに条件の外へ出る事故を防ぐ
+    "react/rules-of-hooks": "error", // 条件分岐や早期 return より後ろで hook を呼ぶ書き方を禁じる
+    "react/react-in-jsx-scope": "off", // JSX に React の import を要求する検査。今の JSX 変換には不要で、全 JSX ファイルが誤検知になる
+    "typescript/no-unsafe-type-assertion": "off" // any / unknown を as で別の型にすることを禁じる検査。JSON.parse の戻り値は as で受けてから中身を確かめるため通らない
   }
 }

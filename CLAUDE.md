@@ -5,17 +5,17 @@
 
 ## 現在のフェーズ
 
-実装完了。動作確認とコードレビューへの対応まで終えている。
+実装完了。動作確認・コードレビュー対応・可読性の整理まで終えている。
 
 ## 構成
 
 Tauri v2 + React + TypeScript。LLM は外部ランタイム（Docker Model Runner / Ollama）の OpenAI 互換 API に接続する。
 
-- `src/api/` — LLM API との契約。接続先プリセット・メッセージ形式・エラー種別。I/O を持たない
+- `src/api/` — LLM API との契約。接続先・メッセージ形式・エラー種別・設定の型。I/O を持たない
 - `src/adapter/` — 外部との接続実装。`llm/` と `storage/`
 - `src/features/` — 校正と設定。カプセル化され、adapter を知らない
-- `src/routes/` — 合成の起点。ポートに adapter の実装を注入する
-- `src/components/` `src/hooks/` `src/styles/` — アプリ共通
+- `src/main.tsx` `src/routes/` — 合成の起点。ポートに adapter の実装を注入する
+- `src/components/` `src/hooks/` `src/styles/` — アプリ共通。Provider は `hooks/` に置く
 
 ## コマンド
 
@@ -34,7 +34,8 @@ pnpm は mise 管理。コミット前に lint / format:check / test / build を
   - `capabilities/default.json` の scope — 最初の URL のみ検査する
   - `adapter/llm/client.ts` の `maxRedirections: 0` — リダイレクト追跡を止める
   - `tauri.conf.json` の CSP — WebView 自身の通信・フォーム送信を塞ぐ
-- プロンプト文面と `cleanup.ts` の正規表現は実測で較正済み。安易に変えない
+- プロンプト文面と `cleanGeneratedText.ts` の正規表現は実測で較正済み。安易に変えない
+- 命名・コンポーネントの分割・状態の持ち方は `docs/design.md` の §6〜§7 に従う
 
 ## ドキュメント
 

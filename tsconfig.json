@@ -1,16 +1,16 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "jsx": "react-jsx",
-    "strict": true,
-    "noEmit": true,
-    "skipLibCheck": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "types": ["vite/client"]
+    "target": "ES2022", // 出力する構文の世代。WKWebView が解釈できる範囲に収める
+    "lib": ["ES2022", "DOM", "DOM.Iterable"], // 型定義を読み込む組み込み API の範囲
+    "module": "ESNext", // モジュール構文は変換せず、そのまま Vite に渡す
+    "moduleResolution": "bundler", // import の解決を bundler の規則に合わせ、拡張子の省略を許す
+    "jsx": "react-jsx", // JSX を自動変換する。React の import が不要になる
+    "strict": true, // 型検査を最も厳しくする。null 許容の取りこぼしを防ぐ
+    "noEmit": true, // 型検査のみ行う。出力は Vite が担う
+    "skipLibCheck": true, // 依存パッケージの型定義は検査しない
+    "noUnusedLocals": true, // 使われていない変数を誤りにする
+    "noUnusedParameters": true, // 使われていない引数を誤りにする
+    "types": ["vite/client"] // Vite が注入する型を読み込む
   },
-  "include": ["src"]
+  "include": ["src"] // 検査対象。設定ファイル類は含めない
 }
