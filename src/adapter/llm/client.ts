@@ -20,6 +20,15 @@ const SAMPLING = { temperature: 0.7 };
 const NO_REDIRECT = { maxRedirections: 0 } as const;
 
 /**
+ * Origin ヘッダを送らない。
+ * tauri-plugin-http は Rust 側で必ず Origin（dev は `http://localhost:5173`、
+ * 本番は `tauri://localhost`）を付ける。ローカルの LLM ランタイムはこれを CORS 検査に
+ * かけるため、許可リストを緩めない限り応答が返らない。空文字を渡すとプラグインが
+ * ヘッダごと削除する。`Cargo.toml` の `unsafe-headers` feature が前提。
+ */
+const NO_ORIGIN = { Origin: '' } as const;
+
+/**
  * fetch を実行し、通信そのものの失敗を `LLMError('unreachable')` に変換する。
  *
  * ランタイムが停止しているときの失敗はここに現れる。素の `TypeError` のままだと
@@ -105,7 +114,7 @@ export async function streamChat(
 ): Promise<string> {
   const res = await fetchOrThrow(fetchFn, `${config.baseUrl}/chat/completions`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...NO_ORIGIN },
     body: JSON.stringify({
       model: config.model,
       messages,
@@ -161,7 +170,10 @@ export async function streamChat(
  * @throws {LLMError} 接続不能なら `unreachable`、それ以外は HTTP ステータスに応じた種別
  */
 export async function fetchModels(fetchFn: IFetch, baseUrl: string): Promise<string[]> {
-  const res = await fetchOrThrow(fetchFn, `${baseUrl}/models`, { ...NO_REDIRECT });
+  const res = await fetchOrThrow(fetchFn, `${baseUrl}/models`, {
+    headers: { ...NO_ORIGIN },
+    ...NO_REDIRECT,
+  });
   if (!res.ok) {
     throw httpErrorOf(res.status);
   }

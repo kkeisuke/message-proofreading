@@ -53,7 +53,7 @@ describe('streamChat', () => {
     const { url, init } = calls[0];
     expect(url).toBe('http://localhost:12434/engines/v1/chat/completions');
     expect(init?.method).toBe('POST');
-    expect(init?.headers).toEqual({ 'Content-Type': 'application/json' });
+    expect(init?.headers).toEqual({ 'Content-Type': 'application/json', Origin: '' });
     expect(init?.signal).toBe(ac.signal);
     expect(init?.maxRedirections).toBe(0);
     expect(JSON.parse(init?.body as string)).toEqual({
@@ -140,7 +140,7 @@ describe('fetchModels', () => {
     expect(await fetchModels(fetchFn, 'http://x')).toEqual(['a', 'b']);
   });
 
-  it('URL を組み立て、リダイレクトを禁止する', async () => {
+  it('URL を組み立て、リダイレクトを禁止し、Origin を送らない', async () => {
     const { calls, fetchFn } = recorder(
       () => new Response(JSON.stringify({ data: [] }), { status: 200 }),
     );
@@ -148,6 +148,7 @@ describe('fetchModels', () => {
     expect(calls).toHaveLength(1);
     expect(calls[0].url).toBe('http://localhost:11434/v1/models');
     expect(calls[0].init?.maxRedirections).toBe(0);
+    expect(calls[0].init?.headers).toEqual({ Origin: '' });
   });
 
   it('接続不能なら unreachable として種別を持つ', async () => {
