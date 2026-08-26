@@ -41,17 +41,5 @@ pnpm は mise 管理。コミット前に lint / format:check / test / build を
 
 ## ルール
 
-- 応答は日本語で行う
 - ドキュメントの作成・編集は `.claude/rules/documentation.md` に従う
 - git の扱いは `.claude/rules/git.md` に従う
-
-# 出力ルール
-
-- 各レスポンスの末尾に、参照したルールとそのファイルを明記すること。
-- リスト形式ですべての参照ルールを列挙すること。
-
-```
-参照ルール
-- ルール名
-  - .claude/rules/ファイル名
-```
