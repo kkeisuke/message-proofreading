@@ -1,5 +1,5 @@
 @layer components {
-  .usage-scene-selector {
+  .usageSceneSelector {
     /* grid 項目は既定で引き伸ばされるため、中身ぶんの幅に留める。 */
     justify-self: start;
     display: inline-flex;

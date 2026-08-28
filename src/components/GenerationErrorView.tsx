@@ -1,15 +1,15 @@
 import { Link } from '@tanstack/react-router';
 import type { GenerationError } from '../hooks/useGeneration';
-import './GenerationErrorView.css';
+import styles from './GenerationErrorView.module.css';
 
 type Props = { error: GenerationError; llmStartHint: string };
 
 export function GenerationErrorView({ error, llmStartHint }: Props) {
   return (
-    <section className="generation-error-view" role="alert">
+    <section className={styles.generationErrorView} role="alert">
       {error.kind === 'unreachable' ? (
         <>
-          <p className="generation-error-view-state">接続できません。</p>
+          <p className={styles.generationErrorViewState}>接続できません。</p>
           <p>{llmStartHint}</p>
           <p>
             接続先は<Link to="/settings">設定</Link>で変更できます。
@@ -17,7 +17,7 @@ export function GenerationErrorView({ error, llmStartHint }: Props) {
         </>
       ) : (
         <>
-          <p className="generation-error-view-state">{error.message}</p>
+          <p className={styles.generationErrorViewState}>{error.message}</p>
           {error.kind === 'model-not-found' ? (
             <p>
               モデル名は<Link to="/settings">設定</Link>で確認できます。

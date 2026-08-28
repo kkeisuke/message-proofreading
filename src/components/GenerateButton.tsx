@@ -1,6 +1,6 @@
 import type { GenerationStatus } from '../hooks/useGeneration';
 import { getButtonActivationProps } from './buttonActivation';
-import './GenerateButton.css';
+import styles from './GenerateButton.module.css';
 
 type Props = {
   status: GenerationStatus;
@@ -14,7 +14,11 @@ type Props = {
 export function GenerateButton({ status, canRun, label, onRun, onCancel }: Props) {
   if (status === 'running') {
     return (
-      <button type="button" className="generate-button" {...getButtonActivationProps(onCancel)}>
+      <button
+        type="button"
+        className={styles.generateButton}
+        {...getButtonActivationProps(onCancel)}
+      >
         中断
       </button>
     );
@@ -22,7 +26,7 @@ export function GenerateButton({ status, canRun, label, onRun, onCancel }: Props
   return (
     <button
       type="button"
-      className="generate-button"
+      className={styles.generateButton}
       disabled={!canRun}
       {...getButtonActivationProps(onRun)}
     >

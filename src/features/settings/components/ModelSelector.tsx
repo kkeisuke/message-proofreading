@@ -1,5 +1,5 @@
 import type { ModelList } from '../../../hooks/useLLMRuntimeStatus';
-import './ModelSelector.css';
+import styles from './ModelSelector.module.css';
 
 type Props = {
   modelList: ModelList;
@@ -10,10 +10,10 @@ type Props = {
 
 export function ModelSelector({ modelList, value, llmStartHint, onChange }: Props) {
   return (
-    <fieldset className="model-selector">
+    <fieldset className={styles.modelSelector}>
       <legend>モデル</legend>
       {modelList.status === 'error' ? (
-        <p className="model-selector-error" role="alert">
+        <p className={styles.modelSelectorError} role="alert">
           接続できません。{llmStartHint}
         </p>
       ) : (

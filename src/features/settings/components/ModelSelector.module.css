@@ -1,5 +1,5 @@
 @layer components {
-  .model-selector {
+  .modelSelector {
     background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
@@ -12,7 +12,7 @@
       font-weight: 600;
     }
 
-    & .model-selector-error {
+    & .modelSelectorError {
       color: var(--color-warn);
     }
 

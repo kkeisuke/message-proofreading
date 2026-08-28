@@ -7,7 +7,7 @@ import { ModelNotSelectedView } from '../../../components/ModelNotSelectedView';
 import { UsageSceneSelector } from '../../../components/UsageSceneSelector';
 import type { StreamTextFn } from '../../../hooks/useGeneration';
 import { useReplyPage } from '../hooks/useReplyPage';
-import './ReplyPage.css';
+import styles from './ReplyPage.module.css';
 
 type Props = {
   streamText: StreamTextFn;
@@ -25,7 +25,7 @@ export function ReplyPage({ streamText, baseUrl, model, llmStartHint }: Props) {
 
   const running = page.status === 'running';
   return (
-    <main className="reply-page">
+    <main className={styles.replyPage}>
       <UsageSceneSelector value={page.usageScene} onChange={page.setUsageScene} />
       <MessageInput
         label="相手のメッセージ"

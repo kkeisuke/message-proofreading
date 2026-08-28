@@ -1,4 +1,4 @@
-import './MessageInput.css';
+import styles from './MessageInput.module.css';
 
 type Props = {
   value: string;
@@ -11,7 +11,7 @@ type Props = {
 export function MessageInput({ value, onChange, placeholder, label }: Props) {
   const textarea = (
     <textarea
-      className="message-input"
+      className={styles.messageInput}
       value={value}
       onChange={(e) => onChange(e.currentTarget.value)}
       placeholder={placeholder}
@@ -22,8 +22,8 @@ export function MessageInput({ value, onChange, placeholder, label }: Props) {
     return textarea;
   }
   return (
-    <label className="message-input-field">
-      <span className="message-input-label">{label}</span>
+    <label className={styles.messageInputField}>
+      <span className={styles.messageInputLabel}>{label}</span>
       {textarea}
     </label>
   );

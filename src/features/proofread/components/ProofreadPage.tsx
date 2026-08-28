@@ -7,7 +7,7 @@ import { ModelNotSelectedView } from '../../../components/ModelNotSelectedView';
 import { UsageSceneSelector } from '../../../components/UsageSceneSelector';
 import type { StreamTextFn } from '../../../hooks/useGeneration';
 import { useProofreadPage } from '../hooks/useProofreadPage';
-import './ProofreadPage.css';
+import styles from './ProofreadPage.module.css';
 
 type Props = {
   streamText: StreamTextFn;
@@ -25,7 +25,7 @@ export function ProofreadPage({ streamText, baseUrl, model, llmStartHint }: Prop
 
   const running = page.status === 'running';
   return (
-    <main className="proofread-page">
+    <main className={styles.proofreadPage}>
       <UsageSceneSelector value={page.usageScene} onChange={page.setUsageScene} />
       <MessageInput
         value={page.input}
