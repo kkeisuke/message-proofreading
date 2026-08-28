@@ -37,7 +37,7 @@ export function ReplyPage({ streamText, baseUrl, model, llmStartHint }: Props) {
         label="伝えたいこと"
         value={page.keyPoints}
         onChange={page.setKeyPoints}
-        placeholder="要点を箇条書きや殴り書きで"
+        placeholder="伝えたい要点と、判断の背景を箇条書きで"
       />
       <GenerateButton
         status={page.status}
