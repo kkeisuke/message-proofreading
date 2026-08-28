@@ -9,7 +9,7 @@ export type IFetch = (url: string, init?: FetchInit) => Promise<Response>;
 
 export type ChatConfig = { baseUrl: string; model: string };
 
-/** 事前検証で較正した値。案の多様性（F3）を担保する。 */
+/** 事前検証の実測をもとに決めた値。案の多様性（F3）を担保する。 */
 const SAMPLING = { temperature: 0.7 };
 
 /**
