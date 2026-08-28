@@ -12,6 +12,7 @@ export function AppHeader({ llmRuntimeLabel }: Props) {
         <Link to="/" activeOptions={{ exact: true }}>
           校正
         </Link>
+        <Link to="/reply">返信</Link>
         <Link to="/settings">設定</Link>
       </nav>
       <ConnectionStatus llmRuntimeLabel={llmRuntimeLabel} />
