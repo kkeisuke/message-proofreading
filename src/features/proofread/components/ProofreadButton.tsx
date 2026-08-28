@@ -1,9 +1,9 @@
 import { getButtonActivationProps } from '../../../components/buttonActivation';
-import type { ProofreadStatus } from '../hooks/useProofreadPage';
+import type { GenerationStatus } from '../../../hooks/useGeneration';
 import './ProofreadButton.css';
 
 type Props = {
-  status: ProofreadStatus;
+  status: GenerationStatus;
   canRun: boolean;
   onRun: () => void;
   onCancel: () => void;

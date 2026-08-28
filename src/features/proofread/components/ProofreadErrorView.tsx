@@ -1,8 +1,8 @@
 import { Link } from '@tanstack/react-router';
-import type { ProofreadError } from '../hooks/useProofreadPage';
+import type { GenerationError } from '../../../hooks/useGeneration';
 import './ProofreadErrorView.css';
 
-type Props = { error: ProofreadError; llmStartHint: string };
+type Props = { error: GenerationError; llmStartHint: string };
 
 export function ProofreadErrorView({ error, llmStartHint }: Props) {
   return (

@@ -1,4 +1,5 @@
-import { useProofreadPage, type StreamTextFn } from '../hooks/useProofreadPage';
+import type { StreamTextFn } from '../../../hooks/useGeneration';
+import { useProofreadPage } from '../hooks/useProofreadPage';
 import { CopyButton } from './CopyButton';
 import { MessageInput } from './MessageInput';
 import { ModelNotSelectedView } from './ModelNotSelectedView';
