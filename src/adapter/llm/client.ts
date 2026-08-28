@@ -15,14 +15,9 @@ const SAMPLING = { temperature: 0.7 };
 /**
  * 推論モデルの思考出力を止める。
  *
- * 推論モデルは答えの前に思考を `delta.reasoning_content` として吐く。この層は
- * `delta.content` しか読まないため、思考は表示されないまま捨てられる。実測では
- * 返信1件で 1973 トークン中およそ 1800 が思考で、生成時間の 95% を占めた。
- * 止めると 2 分台が 10〜20 秒台になる。
- *
- * OpenAI 互換の `reasoning_effort` も試したが、`low` も `none` も無視された。
- * 効いたのはこの指定だけなので、llama.cpp 系の拡張と分かったうえで使う。
- * 思考を持たないモデルは未知のフィールドとして無視するため、送っても影響しない。
+ * 思考は `delta.reasoning_content` で届き、`delta.content` しか読まないこの層では
+ * 捨てられる。実測で生成時間の 95% を占めたため、出させない。
+ * `reasoning_effort` は無視されたので、llama.cpp 系の拡張と承知のうえで使う。
  */
 const NO_THINKING = { chat_template_kwargs: { enable_thinking: false } } as const;
 
