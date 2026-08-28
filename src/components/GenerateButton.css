@@ -1,5 +1,5 @@
 @layer components {
-  .proofread-button {
+  .generate-button {
     justify-self: start;
     min-height: var(--control-height);
     padding-inline: var(--space-6);

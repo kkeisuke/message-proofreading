@@ -61,6 +61,7 @@ describe('streamChat', () => {
       messages,
       stream: true,
       temperature: 0.7,
+      chat_template_kwargs: { enable_thinking: false },
     });
   });
 
@@ -89,7 +90,7 @@ describe('streamChat', () => {
   it('delta が一度も来ない応答は例外にする', async () => {
     const fetchFn: IFetch = async () => serverSentEventsResponse(['[DONE]']);
     await expect(streamChat(fetchFn, { baseUrl: 'http://x', model: 'm' }, [])).rejects.toThrow(
-      '校正案が返りませんでした',
+      '生成結果が返りませんでした',
     );
   });
 

@@ -28,7 +28,7 @@ function saveSettings(storage: IStorage, settings: Settings): void {
   storage.setItem(KEY, JSON.stringify(settings));
 }
 
-/** 保管先を束ねた設定ストアを組み立てる。features 側のポートを構造的部分型で満たす。 */
+/** 保存先を束ねた設定ストアを組み立てる。features 側のポートを構造的部分型で満たす。 */
 export function createSettingsStore(storage: IStorage) {
   return {
     load: (): Settings => loadSettings(storage),

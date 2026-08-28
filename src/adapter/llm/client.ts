@@ -9,8 +9,17 @@ export type IFetch = (url: string, init?: FetchInit) => Promise<Response>;
 
 export type ChatConfig = { baseUrl: string; model: string };
 
-/** 事前検証で較正した値。案の多様性（F3）を担保する。 */
+/** 事前検証の実測をもとに決めた値。案の多様性（F3）を担保する。 */
 const SAMPLING = { temperature: 0.7 };
+
+/**
+ * 推論モデルの思考出力を止める。
+ *
+ * 思考は `delta.reasoning_content` で届き、`delta.content` しか読まないこの層では
+ * 捨てられる。実測で生成時間の 95% を占めたため、出させない。
+ * `reasoning_effort` は無視されたので、llama.cpp 系の拡張と承知のうえで使う。
+ */
+const NO_THINKING = { chat_template_kwargs: { enable_thinking: false } } as const;
 
 /**
  * リダイレクトを追跡しない（N1）。
@@ -120,6 +129,7 @@ export async function streamChat(
       messages,
       stream: true,
       temperature: SAMPLING.temperature,
+      ...NO_THINKING,
     }),
     signal: opts.signal,
     ...NO_REDIRECT,
@@ -153,7 +163,7 @@ export async function streamChat(
   if (!received) {
     throw new LLMError(
       'other',
-      'モデルから校正案が返りませんでした。入力が長すぎるか、モデルが応答できない状態の可能性があります。',
+      'モデルから生成結果が返りませんでした。入力が長すぎるか、モデルが応答できない状態の可能性があります。',
     );
   }
   return acc;

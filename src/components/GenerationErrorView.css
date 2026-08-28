@@ -1,8 +1,8 @@
 @layer components {
-  .proofread-error-view {
+  .generation-error-view {
     background: var(--color-surface);
     border: 1px solid var(--color-border);
-    border-inline-start: 3px solid var(--color-warn); /* 校正結果と一目で区別する */
+    border-inline-start: 3px solid var(--color-warn); /* 生成結果と一目で区別する */
     border-radius: var(--radius);
     padding: var(--space-4);
     min-height: 8lh;
@@ -10,7 +10,7 @@
     align-content: start;
     gap: var(--space-2);
 
-    & .proofread-error-view-state {
+    & .generation-error-view-state {
       color: var(--color-warn);
       font-weight: 600;
     }

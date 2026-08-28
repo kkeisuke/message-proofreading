@@ -1,18 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
-import { getButtonActivationProps } from '../../../components/buttonActivation';
-import './CopyButton.css';
 
-type Props = { text: string; disabled: boolean };
+export type CopyStatus = 'copied' | 'failed';
 
-type Status = 'copied' | 'failed';
-
-const MESSAGE: Record<Status, string> = {
-  copied: 'コピーしました',
-  failed: 'コピーできませんでした',
-};
-
-export function CopyButton({ text, disabled }: Props) {
-  const [status, setStatus] = useState<Status | null>(null);
+/**
+ * クリップボードへの書き込みと、その結果の通知を扱う。
+ *
+ * 通知は Popover を直接開閉するため、要素の参照もここで持つ。
+ * 画面はこれを CopyButton へ渡す。
+ */
+export function useCopyToClipboard() {
+  const [copyStatus, setCopyStatus] = useState<CopyStatus | null>(null);
   const toastRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -24,8 +21,8 @@ export function CopyButton({ text, disabled }: Props) {
     };
   }, []);
 
-  const notify = (nextStatus: Status) => {
-    setStatus(nextStatus);
+  const notify = (nextStatus: CopyStatus) => {
+    setCopyStatus(nextStatus);
     const toast = toastRef.current;
     if (toast && !toast.matches(':popover-open')) {
       toast.showPopover();
@@ -44,7 +41,7 @@ export function CopyButton({ text, disabled }: Props) {
   // async 関数の Promise を捨てるとコピー失敗が握り潰されるため、必ず両方の結果を通知する。
   // 非セキュアコンテキストでは navigator.clipboard が undefined で、
   // writeText の呼び出し自体が同期的に例外を投げるため try で囲む。
-  const copy = () => {
+  const copy = (text: string) => {
     try {
       void navigator.clipboard.writeText(text).then(
         () => notify('copied'),
@@ -55,19 +52,5 @@ export function CopyButton({ text, disabled }: Props) {
     }
   };
 
-  return (
-    <>
-      <button
-        type="button"
-        className="copy-button"
-        disabled={disabled}
-        {...getButtonActivationProps(copy)}
-      >
-        コピー
-      </button>
-      <div ref={toastRef} className="copy-toast" data-status={status ?? ''} popover="manual">
-        {status ? MESSAGE[status] : ''}
-      </div>
-    </>
-  );
+  return { copyStatus, toastRef, copy };
 }

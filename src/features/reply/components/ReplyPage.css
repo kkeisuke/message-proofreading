@@ -1,0 +1,9 @@
+@layer components {
+  .reply-page {
+    display: grid;
+    gap: var(--space-5);
+    padding: var(--space-6) var(--space-5);
+    max-width: var(--page-width);
+    margin-inline: auto;
+  }
+}

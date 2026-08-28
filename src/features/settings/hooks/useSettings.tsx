@@ -9,7 +9,7 @@ type SettingsValue = {
 
 const SettingsContext = createContext<SettingsValue | null>(null);
 
-/** 保管先は合成の起点が注入する。feature は SettingsStore の形だけを知る。 */
+/** 保存先は合成の起点が注入する。feature は SettingsStore の形だけを知る。 */
 export function SettingsProvider({
   store,
   children,

@@ -1,4 +1,14 @@
 @layer components {
+  .message-input-field {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .message-input-label {
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+  }
+
   .message-input {
     /* 入力行数に高さを追従させる。上限を超えたら中でスクロールする。 */
     field-sizing: content;

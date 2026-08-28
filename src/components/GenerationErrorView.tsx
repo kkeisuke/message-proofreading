@@ -1,15 +1,15 @@
 import { Link } from '@tanstack/react-router';
-import type { ProofreadError } from '../hooks/useProofreadPage';
-import './ProofreadErrorView.css';
+import type { GenerationError } from '../hooks/useGeneration';
+import './GenerationErrorView.css';
 
-type Props = { error: ProofreadError; llmStartHint: string };
+type Props = { error: GenerationError; llmStartHint: string };
 
-export function ProofreadErrorView({ error, llmStartHint }: Props) {
+export function GenerationErrorView({ error, llmStartHint }: Props) {
   return (
-    <section className="proofread-error-view" role="alert">
+    <section className="generation-error-view" role="alert">
       {error.kind === 'unreachable' ? (
         <>
-          <p className="proofread-error-view-state">接続できません。</p>
+          <p className="generation-error-view-state">接続できません。</p>
           <p>{llmStartHint}</p>
           <p>
             接続先は<Link to="/settings">設定</Link>で変更できます。
@@ -17,7 +17,7 @@ export function ProofreadErrorView({ error, llmStartHint }: Props) {
         </>
       ) : (
         <>
-          <p className="proofread-error-view-state">{error.message}</p>
+          <p className="generation-error-view-state">{error.message}</p>
           {error.kind === 'model-not-found' ? (
             <p>
               モデル名は<Link to="/settings">設定</Link>で確認できます。

@@ -6,8 +6,8 @@ import { MessageInput } from '../../../components/MessageInput';
 import { ModelNotSelectedView } from '../../../components/ModelNotSelectedView';
 import { UsageSceneSelector } from '../../../components/UsageSceneSelector';
 import type { StreamTextFn } from '../../../hooks/useGeneration';
-import { useProofreadPage } from '../hooks/useProofreadPage';
-import './ProofreadPage.css';
+import { useReplyPage } from '../hooks/useReplyPage';
+import './ReplyPage.css';
 
 type Props = {
   streamText: StreamTextFn;
@@ -16,8 +16,8 @@ type Props = {
   llmStartHint: string;
 };
 
-export function ProofreadPage({ streamText, baseUrl, model, llmStartHint }: Props) {
-  const page = useProofreadPage(streamText, baseUrl, model);
+export function ReplyPage({ streamText, baseUrl, model, llmStartHint }: Props) {
+  const page = useReplyPage(streamText, baseUrl, model);
 
   if (!page.isModelSelected) {
     return <ModelNotSelectedView />;
@@ -25,17 +25,24 @@ export function ProofreadPage({ streamText, baseUrl, model, llmStartHint }: Prop
 
   const running = page.status === 'running';
   return (
-    <main className="proofread-page">
+    <main className="reply-page">
       <UsageSceneSelector value={page.usageScene} onChange={page.setUsageScene} />
       <MessageInput
-        value={page.input}
-        onChange={page.setInput}
-        placeholder="校正したいメッセージを貼り付け"
+        label="相手のメッセージ"
+        value={page.receivedMessage}
+        onChange={page.setReceivedMessage}
+        placeholder="返信したいメッセージを貼り付け"
+      />
+      <MessageInput
+        label="伝えたいこと"
+        value={page.keyPoints}
+        onChange={page.setKeyPoints}
+        placeholder="伝えたい要点と、判断の背景を箇条書きで"
       />
       <GenerateButton
         status={page.status}
         canRun={page.canRun}
-        label="校正する"
+        label="返信を作る"
         onRun={page.run}
         onCancel={page.cancel}
       />
@@ -43,15 +50,15 @@ export function ProofreadPage({ streamText, baseUrl, model, llmStartHint }: Prop
         <GenerationErrorView error={page.error} llmStartHint={llmStartHint} />
       ) : (
         <GeneratedTextView
-          generatedText={page.proofreadText}
+          generatedText={page.replyText}
           running={running}
-          placeholder="校正結果がここに表示されます"
+          placeholder="返信案がここに表示されます"
         />
       )}
       <CopyButton
         copyStatus={page.copyStatus}
         toastRef={page.toastRef}
-        disabled={running || !page.proofreadText}
+        disabled={running || !page.replyText}
         onCopy={page.copy}
       />
     </main>
