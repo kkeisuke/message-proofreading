@@ -1,6 +1,5 @@
 import type { ChatMessage } from '../../../api/chat';
-
-export type UsageScene = 'business' | 'casual';
+import type { UsageScene } from '../../../domain/usageScene';
 
 const COMMON_RULES = [
   'あなたは日本語の校正アシスタントです。入力された短いメッセージを校正し、校正後の本文だけを返します。',

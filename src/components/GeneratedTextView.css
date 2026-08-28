@@ -1,17 +1,17 @@
 @layer components {
-  .proofread-text-view {
+  .generated-text-view {
     background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
     padding: var(--space-4);
     min-height: 8lh;
 
-    & .proofread-text-view-text {
+    & .generated-text-view-text {
       white-space: pre-wrap;
 
-      /* 校正前の空欄が、ただの余白に見えないようにする。 */
+      /* 生成前の空欄が、ただの余白に見えないようにする。文言は呼び出し側が決める。 */
       &:empty::before {
-        content: '校正結果がここに表示されます';
+        content: attr(data-placeholder);
         color: var(--color-text-muted);
       }
     }

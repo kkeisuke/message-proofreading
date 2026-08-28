@@ -1,10 +1,5 @@
-import type { UsageScene } from '../domain/prompts';
+import { USAGE_SCENES, type UsageScene } from '../domain/usageScene';
 import './UsageSceneSelector.css';
-
-const USAGE_SCENES: { id: UsageScene; label: string }[] = [
-  { id: 'business', label: 'ビジネス' },
-  { id: 'casual', label: 'カジュアル' },
-];
 
 type Props = { value: UsageScene; onChange: (usageScene: UsageScene) => void };
 
