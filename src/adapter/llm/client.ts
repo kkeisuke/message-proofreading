@@ -153,7 +153,7 @@ export async function streamChat(
   if (!received) {
     throw new LLMError(
       'other',
-      'モデルから校正案が返りませんでした。入力が長すぎるか、モデルが応答できない状態の可能性があります。',
+      'モデルから生成結果が返りませんでした。入力が長すぎるか、モデルが応答できない状態の可能性があります。',
     );
   }
   return acc;

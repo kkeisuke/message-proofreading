@@ -41,7 +41,7 @@ const LLMRuntimeStatusContext = createContext<LLMRuntimeStatusValue | null>(null
  * ランタイムの到達可否とモデル一覧を持つ。
  *
  * どちらも `/v1/models` への 1 回の通信から分かるため、まとめて 1 つの状態にする。
- * 更新するのは起動時・接続先の切り替え時・校正の通信結果の 3 つ。
+ * 更新するのは起動時・接続先の切り替え時・生成の通信結果の 3 つ。
  */
 export function LLMRuntimeStatusProvider({
   fetchModels,
