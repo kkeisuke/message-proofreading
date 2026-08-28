@@ -13,6 +13,20 @@ export type ChatConfig = { baseUrl: string; model: string };
 const SAMPLING = { temperature: 0.7 };
 
 /**
+ * 推論モデルの思考出力を止める。
+ *
+ * 推論モデルは答えの前に思考を `delta.reasoning_content` として吐く。この層は
+ * `delta.content` しか読まないため、思考は表示されないまま捨てられる。実測では
+ * 返信1件で 1973 トークン中およそ 1800 が思考で、生成時間の 95% を占めた。
+ * 止めると 2 分台が 10〜20 秒台になる。
+ *
+ * OpenAI 互換の `reasoning_effort` も試したが、`low` も `none` も無視された。
+ * 効いたのはこの指定だけなので、llama.cpp 系の拡張と分かったうえで使う。
+ * 思考を持たないモデルは未知のフィールドとして無視するため、送っても影響しない。
+ */
+const NO_THINKING = { chat_template_kwargs: { enable_thinking: false } } as const;
+
+/**
  * リダイレクトを追跡しない（N1）。
  * capability の scope 検査は最初の URL にしか効かず、リダイレクト先は再照合されない。
  * 追跡を許すと、localhost を先に掴んだプロセスの 308 応答で本文が外部へ出る。
@@ -120,6 +134,7 @@ export async function streamChat(
       messages,
       stream: true,
       temperature: SAMPLING.temperature,
+      ...NO_THINKING,
     }),
     signal: opts.signal,
     ...NO_REDIRECT,

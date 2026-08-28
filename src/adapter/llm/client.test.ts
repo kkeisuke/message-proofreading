@@ -61,6 +61,7 @@ describe('streamChat', () => {
       messages,
       stream: true,
       temperature: 0.7,
+      chat_template_kwargs: { enable_thinking: false },
     });
   });
 
