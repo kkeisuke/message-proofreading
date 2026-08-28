@@ -1,12 +1,12 @@
 @layer components {
-  .generated-text-view {
+  .generatedTextView {
     background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
     padding: var(--space-4);
     min-height: 8lh;
 
-    & .generated-text-view-text {
+    & .generatedTextViewText {
       white-space: pre-wrap;
 
       /* 生成前の空欄が、ただの余白に見えないようにする。文言は呼び出し側が決める。 */

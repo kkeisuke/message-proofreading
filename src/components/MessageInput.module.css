@@ -1,15 +1,15 @@
 @layer components {
-  .message-input-field {
+  .messageInputField {
     display: grid;
     gap: var(--space-2);
   }
 
-  .message-input-label {
+  .messageInputLabel {
     color: var(--color-text-muted);
     font-size: 0.875rem;
   }
 
-  .message-input {
+  .messageInput {
     /* 入力行数に高さを追従させる。上限を超えたら中でスクロールする。 */
     field-sizing: content;
     min-height: 6lh;
@@ -31,7 +31,7 @@
 
   /* 追従が使えない環境では、手で高さを変えられるようにしておく。 */
   @supports not (field-sizing: content) {
-    .message-input {
+    .messageInput {
       resize: vertical;
     }
   }

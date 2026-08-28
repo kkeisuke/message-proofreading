@@ -3,7 +3,7 @@ import { useLLMRuntimeStatus } from '../../../hooks/useLLMRuntimeStatus';
 import { useSettings } from '../hooks/useSettings';
 import { LLMRuntimeSelector } from './LLMRuntimeSelector';
 import { ModelSelector } from './ModelSelector';
-import './SettingsPage.css';
+import styles from './SettingsPage.module.css';
 
 export function SettingsPage() {
   const { settings, saveSettings } = useSettings();
@@ -16,7 +16,7 @@ export function SettingsPage() {
   };
 
   return (
-    <main className="settings-page">
+    <main className={styles.settingsPage}>
       <LLMRuntimeSelector value={settings.llmRuntimeId} onChange={selectLLMRuntime} />
       <ModelSelector
         modelList={modelList}

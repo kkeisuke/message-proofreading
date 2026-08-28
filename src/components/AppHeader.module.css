@@ -1,5 +1,5 @@
 @layer components {
-  .app-header {
+  .appHeader {
     display: flex;
     align-items: center;
     gap: var(--space-4);
@@ -8,9 +8,10 @@
     background: var(--color-surface);
     border-bottom: 1px solid var(--color-border);
 
-    & .app-header-nav {
+    & .appHeaderNav {
       display: flex;
       gap: var(--space-1);
+      margin-inline-end: auto; /* 後ろに並ぶ接続状態を右端へ押しやる */
 
       & a {
         padding: var(--space-1) var(--space-3);
@@ -30,10 +31,6 @@
           font-weight: 600;
         }
       }
-    }
-
-    & .connection-status {
-      margin-inline-start: auto;
     }
   }
 }

@@ -1,5 +1,5 @@
 @layer components {
-  .copy-button {
+  .copyButton {
     anchor-name: --copy-button;
     justify-self: start;
     min-height: var(--control-height);
@@ -26,7 +26,7 @@
     }
   }
 
-  .copy-toast {
+  .copyToast {
     position-anchor: --copy-button;
     position-area: top;
     margin-bottom: var(--space-2);
